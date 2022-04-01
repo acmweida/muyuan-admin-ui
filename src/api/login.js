@@ -10,7 +10,8 @@ export function login(username, password, captcha, uuid) {
     client_id: process.env.VUE_APP_CLIENT_NAME,
     client_secret: process.env.VUE_APP_CLIENT_SECRET,
     scope: process.env.VUE_APP_CLIENT_SCOPE,
-    grant_type: process.env.VUE_APP_CLIENT_IMAGE_CAPTCHA
+    grant_type: process.env.VUE_APP_CLIENT_IMAGE_CAPTCHA,
+    user_type: process.env.VUE_APP_USER_TYPE
   }
   return request({
     url: '/api/auth/oauth/token',
@@ -35,7 +36,7 @@ export function login(username, password, captcha, uuid) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/api/member/user/getUserInfo',
+    url: '/api/system/user',
     method: 'get'
   })
 }
