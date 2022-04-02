@@ -3,16 +3,16 @@ import request from '@/utils/request'
 // 查询字典类型列表
 export function listType(query) {
   return request({
-    url: '/api/system/dictType',
+    url: '/api/system/dictType/list',
     method: 'get',
     params: query
   })
 }
 
 // 查询字典类型详细
-export function getType(dictId) {
+export function getType(id) {
   return request({
-    url: '/system/dict/type/' + dictId,
+    url: '/api/system/dictType/' + id,
     method: 'get'
   })
 }

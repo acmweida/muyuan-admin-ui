@@ -5,9 +5,9 @@
         <el-select v-model="queryParams.dictType" size="small">
           <el-option
             v-for="item in typeOptions"
-            :key="item.dictId"
-            :label="item.dictName"
-            :value="item.dictType"
+            :key="item.id"
+            :label="item.name"
+            :value="item.type"
           />
         </el-select>
       </el-form-item>
@@ -280,24 +280,24 @@ export default {
   methods: {
     /** 查询字典类型详细 */
     getType(dictId) {
-      getType(dictId).then(response => {
-        this.queryParams.dictType = response.data.dictType;
-        this.defaultDictType = response.data.dictType;
+      getType(dictId).then(data => {
+        this.queryParams.dictType = data.type;
+        this.defaultDictType = data.type;
         this.getList();
       });
     },
     /** 查询字典类型列表 */
     getTypeList() {
-      listType().then(response => {
-        this.typeOptions = response.rows;
+      listType().then(data => {
+        this.typeOptions = data.rows;
       });
     },
     /** 查询字典数据列表 */
     getList() {
       this.loading = true;
-      listData(this.queryParams).then(response => {
-        this.dataList = response.rows;
-        this.total = response.total;
+      listData(this.queryParams).then(data => {
+        this.dataList = data.rows;
+        this.total = data.total;
         this.loading = false;
       });
     },
