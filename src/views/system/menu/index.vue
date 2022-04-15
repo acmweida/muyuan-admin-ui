@@ -53,11 +53,11 @@
       v-if="refreshTable"
       v-loading="loading"
       :data="menuList"
-      row-key="menuId"
+      row-key="id"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
+      <el-table-column prop="name" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="100">
         <template slot-scope="scope">
           <svg-icon :icon-class="scope.row.icon" />
@@ -78,7 +78,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button 
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -119,7 +119,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="菜单类型" prop="menuType">
+            <el-form-item label="菜单类型" prop="type">
               <el-radio-group v-model="form.menuType">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
@@ -335,8 +335,8 @@ export default {
     /** 查询菜单列表 */
     getList() {
       this.loading = true;
-      listMenu(this.queryParams).then(response => {
-        this.menuList = this.handleTree(response.data, "menuId");
+      listMenu(this.queryParams).then(data => {
+        this.menuList = this.handleTree(data, "id");
         this.loading = false;
       });
     },
@@ -346,17 +346,17 @@ export default {
         delete node.children;
       }
       return {
-        id: node.menuId,
-        label: node.menuName,
+        id: node.id,
+        label: node.name,
         children: node.children
       };
     },
     /** 查询菜单下拉树结构 */
     getTreeselect() {
-      listMenu().then(response => {
+      listMenu().then(data => {
         this.menuOptions = [];
-        const menu = { menuId: 0, menuName: '主类目', children: [] };
-        menu.children = this.handleTree(response.data, "menuId");
+        const menu = { id: 0, name: '主类目', children: [] };
+        menu.children = this.handleTree(data, "id");
         this.menuOptions.push(menu);
       });
     },
@@ -414,8 +414,8 @@ export default {
     handleUpdate(row) {
       this.reset();
       this.getTreeselect();
-      getMenu(row.menuId).then(response => {
-        this.form = response.data;
+      getMenu(row.id).then(data => {
+        this.form = data;
         this.open = true;
         this.title = "修改菜单";
       });
