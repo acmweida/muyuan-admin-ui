@@ -120,14 +120,14 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="菜单类型" prop="type">
-              <el-radio-group v-model="form.menuType">
+              <el-radio-group v-model="form.type">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
                 <el-radio label="F">按钮</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="form.menuType != 'F'">
+          <el-col :span="24" v-if="form.type != 'F'">
             <el-form-item label="菜单图标" prop="icon">
               <el-popover
                 placement="bottom-start"
@@ -151,7 +151,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="菜单名称" prop="menuName">
-              <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
+              <el-input v-model="form.name" placeholder="请输入菜单名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -159,7 +159,7 @@
               <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType != 'F'">
+          <el-col :span="12" v-if="form.type != 'F'">
             <el-form-item>
               <span slot="label">
                 <el-tooltip content="选择是外链则路由地址需要以`http(s)://`开头" placement="top">
@@ -173,7 +173,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType != 'F'">
+          <el-col :span="12" v-if="form.type != 'F'">
             <el-form-item prop="path">
               <span slot="label">
                 <el-tooltip content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头" placement="top">
@@ -184,7 +184,7 @@
               <el-input v-model="form.path" placeholder="请输入路由地址" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType == 'C'">
+          <el-col :span="12" v-if="form.type == 'C'">
             <el-form-item prop="component">
               <span slot="label">
                 <el-tooltip content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top">
@@ -195,7 +195,7 @@
               <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType != 'M'">
+          <el-col :span="12" v-if="form.type != 'M'">
             <el-form-item>
               <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
               <span slot="label">
@@ -206,7 +206,7 @@
               </span>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType == 'C'">
+          <el-col :span="12" v-if="form.type == 'C'">
             <el-form-item>
               <el-input v-model="form.query" placeholder="请输入路由参数" maxlength="255" />
               <span slot="label">
@@ -217,7 +217,7 @@
               </span>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType == 'C'">
+          <el-col :span="12" v-if="form.type == 'C'">
             <el-form-item>
               <span slot="label">
                 <el-tooltip content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" placement="top">
@@ -231,7 +231,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType != 'F'">
+          <el-col :span="12" v-if="form.type != 'F'">
             <el-form-item>
               <span slot="label">
                 <el-tooltip content="选择隐藏则路由将不会出现在侧边栏，但仍然可以访问" placement="top">
@@ -248,7 +248,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType != 'F'">
+          <el-col :span="12" v-if="form.type != 'F'">
             <el-form-item>
               <span slot="label">
                 <el-tooltip content="选择停用则路由将不会出现在侧边栏，也不能被访问" placement="top">
@@ -312,7 +312,7 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        menuName: [
+        name: [
           { required: true, message: "菜单名称不能为空", trigger: "blur" }
         ],
         orderNum: [
@@ -394,8 +394,8 @@ export default {
     handleAdd(row) {
       this.reset();
       this.getTreeselect();
-      if (row != null && row.menuId) {
-        this.form.parentId = row.menuId;
+      if (row != null && row.id) {
+        this.form.parentId = row.id;
       } else {
         this.form.parentId = 0;
       }
@@ -442,8 +442,8 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项？').then(function() {
-        return delMenu(row.menuId);
+      this.$modal.confirm('是否确认删除名称为"' + row.name + '"的数据项？').then(function() {
+        return delMenu(row.id);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
