@@ -1,20 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
-      <el-form-item label="角色名称" prop="roleName">
+      <el-form-item label="角色名称" prop="name">
         <el-input
-          v-model="queryParams.roleName"
+          v-model="queryParams.name"
           placeholder="请输入角色名称"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="权限字符" prop="roleKey">
-        <el-input
-          v-model="queryParams.roleKey"
-          placeholder="请输入权限字符"
           clearable
           size="small"
           style="width: 240px"
@@ -105,7 +95,6 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="显示顺序" prop="roleSort" width="100" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
@@ -123,7 +112,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.roleId !== 1">
+        <template slot-scope="scope" v-if="scope.row.id !== 1">
           <el-button
             size="mini"
             type="text"
@@ -167,15 +156,6 @@
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="form.roleName" placeholder="请输入角色名称" />
         </el-form-item>
-        <el-form-item prop="roleKey">
-          <span slot="label">
-            <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-            权限字符
-          </span>
-          <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
-        </el-form-item>
         <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
         </el-form-item>
@@ -218,9 +198,6 @@
       <el-form :model="form" label-width="80px">
         <el-form-item label="角色名称">
           <el-input v-model="form.roleName" :disabled="true" />
-        </el-form-item>
-        <el-form-item label="权限字符">
-          <el-input v-model="form.roleKey" :disabled="true" />
         </el-form-item>
         <el-form-item label="权限范围">
           <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
@@ -338,9 +315,6 @@ export default {
       rules: {
         roleName: [
           { required: true, message: "角色名称不能为空", trigger: "blur" }
-        ],
-        roleKey: [
-          { required: true, message: "权限字符不能为空", trigger: "blur" }
         ],
         roleSort: [
           { required: true, message: "角色顺序不能为空", trigger: "blur" }

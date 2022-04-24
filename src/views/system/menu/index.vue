@@ -167,7 +167,7 @@
                 </el-tooltip>
                 是否外链
               </span>
-              <el-radio-group v-model="form.isFrame">
+              <el-radio-group v-model="form.frame">
                 <el-radio label="0">是</el-radio>
                 <el-radio label="1">否</el-radio>
               </el-radio-group>
@@ -225,7 +225,7 @@
                 </el-tooltip>
                 是否缓存
               </span>
-              <el-radio-group v-model="form.isCache">
+              <el-radio-group v-model="form.cache">
                 <el-radio label="0">缓存</el-radio>
                 <el-radio label="1">不缓存</el-radio>
               </el-radio-group>
@@ -374,8 +374,8 @@ export default {
         icon: undefined,
         menuType: "M",
         orderNum: undefined,
-        isFrame: "1",
-        isCache: "0",
+        frame: "1",
+        cache: "0",
         visible: "0",
         status: "0"
       };
