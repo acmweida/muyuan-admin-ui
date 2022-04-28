@@ -11,6 +11,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="角色编码" prop="roleKey">
+        <el-input
+          v-model="queryParams.code"
+          placeholder="请输入角色编码"
+          clearable
+          size="small"
+          style="width: 240px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
@@ -93,7 +103,7 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色编号" prop="code" width="120" />
+      <el-table-column label="角色编码" prop="code" width="120" />
       <el-table-column label="角色名称" prop="name" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="显示顺序" prop="sort" width="100" />
       <el-table-column label="状态" align="center" width="100">
@@ -153,11 +163,14 @@
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="form.roleName" placeholder="请输入角色名称" />
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入角色名称" />
         </el-form-item>
-        <el-form-item label="角色顺序" prop="roleSort">
-          <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
+        <el-form-item label="角色编码" prop="code">
+          <el-input v-model="form.code" placeholder="请输入角色编码" />
+        </el-form-item>
+        <el-form-item label="角色顺序" prop="sort">
+          <el-input-number v-model="form.sort" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -182,9 +195,6 @@
             empty-text="加载中，请稍候"
             :props="defaultProps"
           ></el-tree>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -301,8 +311,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        roleName: undefined,
-        roleKey: undefined,
+        name: undefined,
+        code: undefined,
         status: undefined
       },
       // 表单参数
@@ -313,10 +323,10 @@ export default {
       },
       // 表单校验
       rules: {
-        roleName: [
+        name: [
           { required: true, message: "角色名称不能为空", trigger: "blur" }
         ],
-        roleSort: [
+        sort: [
           { required: true, message: "角色顺序不能为空", trigger: "blur" }
         ]
       }
@@ -338,8 +348,8 @@ export default {
     },
     /** 查询菜单树结构 */
     getMenuTreeselect() {
-      menuTreeselect().then(response => {
-        this.menuOptions = response.data;
+      menuTreeselect().then(data => {
+        this.menuOptions = data;
       });
     },
     /** 查询部门树结构 */
@@ -411,16 +421,15 @@ export default {
       this.deptExpand = true,
       this.deptNodeAll = false,
       this.form = {
-        roleId: undefined,
-        roleName: undefined,
-        roleKey: undefined,
-        roleSort: 0,
+        id: undefined,
+        code: undefined,
+        name: undefined,
+        sort: 0,
         status: "0",
         menuIds: [],
         deptIds: [],
         menuCheckStrictly: true,
-        deptCheckStrictly: true,
-        remark: undefined
+        deptCheckStrictly: true
       };
       this.resetForm("form");
     },
@@ -494,7 +503,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const roleId = row.roleId || this.ids
+      const roleId = row.id || this.ids
       const roleMenu = this.getRoleMenuTreeselect(roleId);
       getRole(roleId).then(response => {
         this.form = response.data;
@@ -562,7 +571,7 @@ export default {
     },
     /** 提交按钮（数据权限） */
     submitDataScope: function() {
-      if (this.form.roleId != undefined) {
+      if (this.form.id != undefined) {
         this.form.deptIds = this.getDeptAllCheckedKeys();
         dataScope(this.form).then(response => {
           this.$modal.msgSuccess("修改成功");
