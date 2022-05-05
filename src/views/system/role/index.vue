@@ -378,9 +378,9 @@ export default {
     },
     /** 根据角色ID查询菜单树结构 */
     getRoleMenuTreeselect(roleId) {
-      return roleMenuTreeselect(roleId).then(response => {
-        this.menuOptions = response.menus;
-        return response;
+      return roleMenuTreeselect(roleId).then(data => {
+        this.menuOptions = data.selectTree;
+        return data;
       });
     },
     /** 根据角色ID查询部门树结构 */
@@ -505,8 +505,8 @@ export default {
       this.reset();
       const roleId = row.id || this.ids
       const roleMenu = this.getRoleMenuTreeselect(roleId);
-      getRole(roleId).then(response => {
-        this.form = response.data;
+      getRole(roleId).then(data => {
+        this.form = data;
         this.open = true;
         this.$nextTick(() => {
           roleMenu.then(res => {
@@ -551,7 +551,7 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.roleId != undefined) {
+          if (this.form.id != undefined) {
             this.form.menuIds = this.getMenuAllCheckedKeys();
             updateRole(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
