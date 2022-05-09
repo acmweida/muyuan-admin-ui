@@ -582,7 +582,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const roleIds = row.roleId || this.ids;
+      const roleIds = row.id || this.ids;
       this.$modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？').then(function() {
         return delRole(roleIds);
       }).then(() => {
@@ -592,7 +592,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/role/export', {
+      this.download('/api/system/role/export', {
         ...this.queryParams
       }, `role_${new Date().getTime()}.xlsx`)
     }
