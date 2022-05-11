@@ -122,7 +122,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.id !== 1">
+        <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
@@ -245,9 +245,9 @@
 </template>
 
 <script>
-import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from "@/api/system/role";
-import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
-import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/system/dept";
+import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from "@/api/merchants/role";
+import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/merchants/menu";
+import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/merchants/dept";
 
 export default {
   name: "Role",
