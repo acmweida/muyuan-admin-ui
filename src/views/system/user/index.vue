@@ -30,7 +30,7 @@
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="用户名称" prop="userName">
             <el-input
-              v-model="queryParams.userName"
+              v-model="queryParams.username"
               placeholder="请输入用户名称"
               clearable
               size="small"
@@ -40,7 +40,7 @@
           </el-form-item>
           <el-form-item label="手机号码" prop="phonenumber">
             <el-input
-              v-model="queryParams.phonenumber"
+              v-model="queryParams.phone"
               placeholder="请输入手机号码"
               clearable
               size="small"
@@ -140,11 +140,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-          <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="用户编号" align="center" key="id" prop="id" v-if="columns[0].visible" />
+          <el-table-column label="用户名称" align="center" key="username" prop="username" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+          <el-table-column label="手机号码" align="center" key="phone" prop="phone" v-if="columns[4].visible" width="120" />
           <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
             <template slot-scope="scope">
               <el-switch
@@ -166,7 +166,7 @@
             width="160"
             class-name="small-padding fixed-width"
           >
-            <template slot-scope="scope" v-if="scope.row.userId !== 1">
+            <template slot-scope="scope" v-if="scope.row.id !== 1473141102158827500">
               <el-button
                 size="mini"
                 type="text"
@@ -474,7 +474,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listUser(this.addDateRange(this.queryParams, this.dateRange,'CreateTime')).then(response => {
           this.userList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -483,8 +483,8 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-      treeselect().then(response => {
-        this.deptOptions = response.data;
+      treeselect().then(data => {
+        this.deptOptions = data;
       });
     },
     // 筛选节点

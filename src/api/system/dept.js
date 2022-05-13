@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询部门列表
 export function listDept(query) {
   return request({
-    url: '/system/dept/list',
+    url: '/api/system/dept/list',
     method: 'get',
     params: query
   })
@@ -28,7 +28,7 @@ export function getDept(deptId) {
 // 查询部门下拉树结构
 export function treeselect() {
   return request({
-    url: '/system/dept/treeselect',
+    url: '/api/system/dept/treeselect',
     method: 'get'
   })
 }

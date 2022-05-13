@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
-      <el-form-item label="部门名称" prop="deptName">
+      <el-form-item label="部门名称" prop="name">
         <el-input
-          v-model="queryParams.deptName"
+          v-model="queryParams.name"
           placeholder="请输入部门名称"
           clearable
           size="small"
@@ -53,11 +53,11 @@
       v-if="refreshTable"
       v-loading="loading"
       :data="deptList"
-      row-key="deptId"
+      row-key="id"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
+      <el-table-column prop="name" label="部门名称" width="260"></el-table-column>
       <el-table-column prop="orderNum" label="排序" width="200"></el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
@@ -109,8 +109,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="部门名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+            <el-form-item label="部门名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入部门名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -187,7 +187,7 @@ export default {
       refreshTable: true,
       // 查询参数
       queryParams: {
-        deptName: undefined,
+        name: undefined,
         status: undefined
       },
       // 表单参数
@@ -197,7 +197,7 @@ export default {
         parentId: [
           { required: true, message: "上级部门不能为空", trigger: "blur" }
         ],
-        deptName: [
+        name: [
           { required: true, message: "部门名称不能为空", trigger: "blur" }
         ],
         orderNum: [
@@ -227,8 +227,9 @@ export default {
     /** 查询部门列表 */
     getList() {
       this.loading = true;
-      listDept(this.queryParams).then(response => {
-        this.deptList = this.handleTree(response.data, "deptId");
+      listDept(this.queryParams).then(data => {
+        console.log(data)
+        this.deptList = this.handleTree(data, "id");
         this.loading = false;
       });
     },
@@ -238,8 +239,8 @@ export default {
         delete node.children;
       }
       return {
-        id: node.deptId,
-        label: node.deptName,
+        id: node.id,
+        label: node.name,
         children: node.children
       };
     },
@@ -251,9 +252,9 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        deptId: undefined,
+        id: undefined,
         parentId: undefined,
-        deptName: undefined,
+        name: undefined,
         orderNum: undefined,
         leader: undefined,
         phone: undefined,
@@ -275,12 +276,12 @@ export default {
     handleAdd(row) {
       this.reset();
       if (row != undefined) {
-        this.form.parentId = row.deptId;
+        this.form.parentId = row.id;
       }
       this.open = true;
       this.title = "添加部门";
       listDept().then(response => {
-        this.deptOptions = this.handleTree(response.data, "deptId");
+        this.deptOptions = this.handleTree(response.data, "id");
       });
     },
     /** 展开/折叠操作 */
@@ -294,20 +295,20 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      getDept(row.deptId).then(response => {
+      getDept(row.id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改部门";
       });
-      listDeptExcludeChild(row.deptId).then(response => {
-        this.deptOptions = this.handleTree(response.data, "deptId");
+      listDeptExcludeChild(row.id).then(response => {
+        this.deptOptions = this.handleTree(response.data, "id");
       });
     },
     /** 提交按钮 */
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.deptId != undefined) {
+          if (this.form.id != undefined) {
             updateDept(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -325,8 +326,8 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项？').then(function() {
-        return delDept(row.deptId);
+      this.$modal.confirm('是否确认删除名称为"' + row.name + '"的数据项？').then(function() {
+        return delDept(row.id);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
