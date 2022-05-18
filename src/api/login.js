@@ -36,7 +36,7 @@ export function login(username, password, captcha, uuid) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/api/system/user',
+    url: '/api/system/getUserInfo',
     method: 'get'
   })
 }

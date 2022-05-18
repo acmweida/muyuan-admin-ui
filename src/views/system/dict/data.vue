@@ -101,7 +101,7 @@
         </template>
       </el-table-column>
       <el-table-column label="字典键值" align="center" prop="value" />
-      <el-table-column label="字典排序" align="center" prop="sort" />
+      <el-table-column label="字典排序" align="center" prop="orderNum" />
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>

@@ -228,7 +228,6 @@ export default {
     getList() {
       this.loading = true;
       listDept(this.queryParams).then(data => {
-        console.log(data)
         this.deptList = this.handleTree(data, "id");
         this.loading = false;
       });
@@ -280,8 +279,8 @@ export default {
       }
       this.open = true;
       this.title = "添加部门";
-      listDept().then(response => {
-        this.deptOptions = this.handleTree(response.data, "id");
+      listDept().then(data => {
+        this.deptOptions = this.handleTree(data, "id");
       });
     },
     /** 展开/折叠操作 */

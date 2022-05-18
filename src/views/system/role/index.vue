@@ -105,7 +105,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="角色编码" prop="code" width="120" />
       <el-table-column label="角色名称" prop="name" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="显示顺序" prop="sort" width="100" />
+      <el-table-column label="显示顺序" prop="orderNum" width="100" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -169,7 +169,7 @@
         <el-form-item label="角色编码" prop="code">
           <el-input v-model="form.code" placeholder="请输入角色编码" />
         </el-form-item>
-        <el-form-item label="角色顺序" prop="sort">
+        <el-form-item label="角色顺序" prop="orderNum">
           <el-input-number v-model="form.sort" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item label="状态">

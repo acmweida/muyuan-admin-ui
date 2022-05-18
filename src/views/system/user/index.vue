@@ -235,7 +235,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户户名称" prop="username">
+            <el-form-item v-if="form.userId == undefined" label="用户名" prop="username">
               <el-input v-model="form.username" placeholder="请输入用户名称" maxlength="30" />
             </el-form-item>
           </el-col>
@@ -289,8 +289,8 @@
               <el-select v-model="form.roleIds" multiple placeholder="请选择">
                 <el-option
                   v-for="item in roleOptions"
-                  :key="item.roleId"
-                  :label="item.roleName"
+                  :key="item.id"
+                  :label="item.name"
                   :value="item.roleId"
                   :disabled="item.status == 1"
                 ></el-option>
@@ -429,16 +429,17 @@ export default {
       ],
       // 表单校验
       rules: {
-        userName: [
+        username: [
           { required: true, message: "用户名称不能为空", trigger: "blur" },
-          { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+          { pattern: /^[a-zA-Z0-9_-]{4,16}$/,
+            message: '只能由字母、数字、下划线组成，且长度是4-16位', trigger: 'blur' }
         ],
         nickName: [
           { required: true, message: "用户昵称不能为空", trigger: "blur" }
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
-          { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
+          { pattern:/.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/, message: '最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符', trigger: 'blur' }
         ],
         email: [
           {
@@ -500,8 +501,8 @@ export default {
     // 用户状态修改
     handleStatusChange(row) {
       let text = row.status === "0" ? "启用" : "停用";
-      this.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
-        return changeUserStatus(row.userId, row.status);
+      this.$modal.confirm('确认要"' + text + '""' + row.username + '"用户吗？').then(function() {
+        return changeUserStatus(row.id, row.status);
       }).then(() => {
         this.$modal.msgSuccess(text + "成功");
       }).catch(function() {
@@ -566,8 +567,8 @@ export default {
       this.reset();
       this.getTreeselect();
       getUser().then(response => {
-        this.postOptions = response.posts;
-        this.roleOptions = response.roles;
+        // this.postOptions = response.posts;
+        this.roleOptions = response.sysRoles;
         this.open = true;
         this.title = "添加用户";
         this.form.password = this.initPassword;
