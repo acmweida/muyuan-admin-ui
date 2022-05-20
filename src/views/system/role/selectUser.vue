@@ -4,7 +4,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="用户名称" prop="userName">
         <el-input
-          v-model="queryParams.userName"
+          v-model="queryParams.username"
           placeholder="请输入用户名称"
           clearable
           size="small"
@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item label="手机号码" prop="phonenumber">
         <el-input
-          v-model="queryParams.phonenumber"
+          v-model="queryParams.phone"
           placeholder="请输入手机号码"
           clearable
           size="small"
@@ -28,10 +28,10 @@
     <el-row>
       <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange" height="260px">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
+        <el-table-column label="用户名称" prop="username" :show-overflow-tooltip="true" />
         <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
         <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
-        <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
+        <el-table-column label="手机" prop="phone" :show-overflow-tooltip="true" />
         <el-table-column label="状态" align="center" prop="status">
           <template slot-scope="scope">
             <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
@@ -83,8 +83,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         roleId: undefined,
-        userName: undefined,
-        phonenumber: undefined
+        username: undefined,
+        phone: undefined
       }
     };
   },
@@ -100,7 +100,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.userIds = selection.map(item => item.userId);
+      this.userIds = selection.map(item => item.id);
     },
     // 查询表数据
     getList() {
@@ -121,6 +121,7 @@ export default {
     },
     /** 选择授权用户操作 */
     handleSelectUser() {
+      debugger
       const roleId = this.queryParams.roleId;
       const userIds = this.userIds.join(",");
       if (userIds == "") {

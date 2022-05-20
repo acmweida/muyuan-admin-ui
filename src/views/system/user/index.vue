@@ -291,7 +291,7 @@
                   v-for="item in roleOptions"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.roleId"
+                  :value="item.id"
                   :disabled="item.status == 1"
                 ></el-option>
               </el-select>

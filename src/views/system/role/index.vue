@@ -544,7 +544,7 @@ export default {
     },
     /** 分配用户操作 */
     handleAuthUser: function(row) {
-      const roleId = row.roleId;
+      const roleId = row.id;
       this.$router.push("/system/role-auth/user/" + roleId);
     },
     /** 提交按钮 */
