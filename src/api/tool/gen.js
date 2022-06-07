@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询生成表数据
 export function listTable(query) {
   return request({
-    url: '/code/gen/list',
+    url: '/system/gen/list',
     method: 'get',
     params: query
   })
@@ -11,7 +11,7 @@ export function listTable(query) {
 // 查询db数据库列表
 export function listDbTable(query) {
   return request({
-    url: '/code/gen/db/list',
+    url: '/api/system/gen/db/list',
     method: 'get',
     params: query
   })
@@ -37,7 +37,7 @@ export function updateGenTable(data) {
 // 导入表
 export function importTable(data) {
   return request({
-    url: '/code/gen/importTable',
+    url: '/api/system/gen/importTable',
     method: 'post',
     params: data
   })

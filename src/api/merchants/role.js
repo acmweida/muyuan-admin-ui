@@ -68,7 +68,7 @@ export function delRole(roleId) {
 // 查询角色已授权用户列表
 export function allocatedUserList(query) {
   return request({
-    url: '/system/role/authUser/allocatedList',
+    url: '/api/member/role/authUser/allocatedList',
     method: 'get',
     params: query
   })
