@@ -110,7 +110,7 @@
           return;
         }
         importTable({tables: tableNames}).then(res => {
-          this.$modal.msgSuccess(res.msg);
+          this.$modal.msgSuccess("操作成功");
           this.visible = false;
           this.$emit("ok");
         });

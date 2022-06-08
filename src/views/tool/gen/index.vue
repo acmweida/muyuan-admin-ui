@@ -270,7 +270,7 @@ export default {
           this.$modal.msgSuccess("成功生成到自定义路径：" + row.genPath);
         });
       } else {
-        this.$download.zip("/code/gen/batchGenCode?tables=" + tableNames, "ruoyi");
+        this.$download.zip("/api/system/gen/batchGenCode?tables=" + tableNames, "ruoyi");
       }
     },
     /** 同步数据库操作 */
@@ -295,7 +295,7 @@ export default {
     /** 预览按钮 */
     handlePreview(row) {
       previewTable(row.tableId).then(response => {
-        this.preview.data = response.data;
+        this.preview.data = response;
         this.preview.open = true;
         this.preview.activeName = "domain.java";
       });

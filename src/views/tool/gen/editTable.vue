@@ -168,12 +168,12 @@ export default {
         this.tables = res.data.tables;
       });
       /** 查询字典下拉列表 */
-      getDictOptionselect().then(response => {
-        this.dictOptions = response.data;
+      getDictOptionselect().then(data => {
+        this.dictOptions = data;
       });
       /** 查询菜单下拉列表 */
-      getMenuTreeselect().then(response => {
-        this.menus = this.handleTree(response.data, "menuId");
+      getMenuTreeselect().then(data => {
+        this.menus = this.handleTree(data, "id");
       });
     }
   },
