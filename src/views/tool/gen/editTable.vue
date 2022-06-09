@@ -162,10 +162,10 @@ export default {
     const tableId = this.$route.params && this.$route.params.tableId;
     if (tableId) {
       // 获取表详细信息
-      getGenTable(tableId).then(res => {
-        this.columns = res.data.rows;
-        this.info = res.data.info;
-        this.tables = res.data.tables;
+      getGenTable(tableId).then(data => {
+        this.columns = data.rows;
+        this.info = data.info;
+        this.tables = data.tables;
       });
       /** 查询字典下拉列表 */
       getDictOptionselect().then(data => {

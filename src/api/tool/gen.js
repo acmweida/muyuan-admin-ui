@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询生成表数据
 export function listTable(query) {
   return request({
-    url: '/system/gen/list',
+    url: '/api/system/gen/list',
     method: 'get',
     params: query
   })
@@ -28,7 +28,7 @@ export function getGenTable(tableId) {
 // 修改代码生成信息
 export function updateGenTable(data) {
   return request({
-    url: '/code/gen',
+    url: '/api/system/gen',
     method: 'put',
     data: data
   })
@@ -54,7 +54,7 @@ export function previewTable(tableId) {
 // 删除表数据
 export function delTable(tableId) {
   return request({
-    url: '/code/gen/' + tableId,
+    url: '/api/system/gen/' + tableId,
     method: 'delete'
   })
 }
