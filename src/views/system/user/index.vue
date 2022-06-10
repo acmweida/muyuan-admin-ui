@@ -606,7 +606,7 @@ export default {
     },
     /** 分配角色操作 */
     handleAuthRole: function(row) {
-      const userId = row.userId;
+      const userId = row.id;
       this.$router.push("/system/user-auth/role/" + userId);
     },
     /** 提交按钮 */
