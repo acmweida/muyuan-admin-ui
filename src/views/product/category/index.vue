@@ -41,6 +41,30 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="" prop="logo">
+        <el-input
+          v-model="queryParams.logo"
+          placeholder="请输入"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="" prop="productCount">
+        <el-input
+          v-model="queryParams.productCount"
+          placeholder="请输入"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="" prop="orderNum">
+        <el-input
+          v-model="queryParams.orderNum"
+          placeholder="请输入"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -83,6 +107,10 @@
       <el-table-column label="晨级" align="center" prop="level" />
       <el-table-column label="产品编码" align="center" prop="code" />
       <el-table-column label="层级路径" align="center" prop="ancestors" />
+      <el-table-column label="" align="center" prop="logo" />
+      <el-table-column label="" align="center" prop="productCount" />
+      <el-table-column label="0-上架 1-下架 2-删除" align="center" prop="status" />
+      <el-table-column label="" align="center" prop="orderNum" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,7 +142,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="父类ID" prop="parentId">
-          <treeselect v-model="form.parentId" :options="categoryOptions" :normalizer="normalizer" placeholder="请选择父类ID" />
+          <el-input v-model="form.parentId" placeholder="请输入父类ID" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入分类名称" />
@@ -143,6 +171,15 @@
         </el-form-item>
         <el-form-item label="层级路径" prop="ancestors">
           <el-input v-model="form.ancestors" placeholder="请输入层级路径" />
+        </el-form-item>
+        <el-form-item label="" prop="logo">
+          <el-input v-model="form.logo" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="" prop="productCount">
+          <el-input v-model="form.productCount" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="" prop="orderNum">
+          <el-input v-model="form.orderNum" placeholder="请输入" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -187,7 +224,11 @@
           name: null,
           level: null,
           code: null,
-          ancestors: null
+          ancestors: null,
+          logo: null,
+          productCount: null,
+          status: null,
+          orderNum: null
         },
         // 表单参数
         form: {},
@@ -204,7 +245,7 @@
       getList() {
         this.loading = true;
         listCategory(this.queryParams).then(response => {
-          this.categoryList = this.handleTree(response.data, "id", "parentId");
+          this.categoryList = this.handleTree(response, "id", "parendId");
           this.loading = false;
         });
       },
@@ -224,7 +265,7 @@
         listCategory().then(response => {
           this.categoryOptions = [];
           const data = { id: 0, name: '顶级节点', children: [] };
-          data.children = this.handleTree(response.data, "id", "parentId");
+          data.children = this.handleTree(response.data, "id", "parendId");
           this.categoryOptions.push(data);
         });
       },
@@ -243,7 +284,11 @@
           createTime: null,
           updateTime: null,
           code: null,
-          ancestors: null
+          ancestors: null,
+          logo: null,
+          productCount: null,
+          status: 0,
+          orderNum: null
         };
         this.resetForm("form");
       },
@@ -261,9 +306,9 @@
         this.reset();
         this.getTreeselect();
         if (row != null && row.id) {
-          this.form.parentId = row.id;
+          this.form.parendId = row.id;
         } else {
-          this.form.parentId = 0;
+          this.form.parendId = 0;
         }
         this.open = true;
         this.title = "添加商品分类";
@@ -281,7 +326,7 @@
         this.reset();
         this.getTreeselect();
         if (row != null) {
-          this.form.parentId = row.id;
+          this.form.parendId = row.id;
         }
         getCategory(row.id).then(response => {
           this.form = response.data;
