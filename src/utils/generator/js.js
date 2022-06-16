@@ -60,7 +60,7 @@ function buildAttributes(el, dataList, ruleList, optionsList, methodList, propsL
 
   if (el.action && el.tag === 'el-upload') {
     uploadVarList.push(
-      `${el.vModel}Action: '${el.action}',
+      `${el.vModel}Action: '${el.action}?module=${el.module}&function=${el.function}',
       ${el.vModel}fileList: [],`
     )
     methodList.push(buildBeforeUpload(el))

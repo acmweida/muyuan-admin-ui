@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="父类ID" prop="parentId">
-        <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入父类ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="分类名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -33,38 +25,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="层级路径" prop="ancestors">
-        <el-input
-          v-model="queryParams.ancestors"
-          placeholder="请输入层级路径"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="" prop="logo">
-        <el-input
-          v-model="queryParams.logo"
-          placeholder="请输入"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="" prop="productCount">
-        <el-input
-          v-model="queryParams.productCount"
-          placeholder="请输入"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="" prop="orderNum">
-        <el-input
-          v-model="queryParams.orderNum"
-          placeholder="请输入"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -80,7 +40,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['product:category:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -89,7 +50,8 @@
           icon="el-icon-sort"
           size="mini"
           @click="toggleExpandAll"
-        >展开/折叠</el-button>
+        >展开/折叠
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -102,15 +64,16 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="父类ID" prop="parentId" />
-      <el-table-column label="分类名称" align="center" prop="name" />
-      <el-table-column label="晨级" align="center" prop="level" />
-      <el-table-column label="产品编码" align="center" prop="code" />
-      <el-table-column label="层级路径" align="center" prop="ancestors" />
-      <el-table-column label="" align="center" prop="logo" />
-      <el-table-column label="" align="center" prop="productCount" />
-      <el-table-column label="0-上架 1-下架 2-删除" align="center" prop="status" />
-      <el-table-column label="" align="center" prop="orderNum" />
+      <el-table-column label="分类名称" align="center" prop="name"/>
+      <el-table-column label="产品编码" align="center" prop="code"/>
+      <el-table-column label="分类图标" align="center" prop="logo"/>
+      <el-table-column label="商品数量" align="center" prop="productCount"/>
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="" align="center" prop="orderNum"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -119,84 +82,68 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['product:category:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-plus"
             @click="handleAdd(scope.row)"
             v-hasPermi="['product:category:add']"
-          >新增</el-button>
+          >新增
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['product:category:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 添加或修改商品分类对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="父类ID" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入父类ID" />
-        </el-form-item>
+    <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="open" :title="title" width="500px" append-to-body>
+      <el-form ref="category" :model="form" :rules="rules" size="smail" label-width="100px">
         <el-form-item label="分类名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入分类名称" />
+          <el-input v-model="form.name" placeholder="请输入分类名称" clearable :style="{width: '100%'}">
+          </el-input>
         </el-form-item>
-        <el-form-item label="晨级" prop="level">
-          <el-input v-model="form.level" placeholder="请输入晨级" />
+        <el-form-item label="父分类" prop="parentId">
+          <el-cascader v-model="form.parentId" :options="parentIdOptions" :props="parentIdProps"
+                       :style="{width: '100%'}" placeholder="请选择父分类" filterable clearable></el-cascader>
         </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker clearable
-                          v-model="form.createTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="选择创建时间">
-          </el-date-picker>
+        <el-form-item label="分类编码" prop="code">
+          <el-input v-model="form.code" placeholder="请输入分类编码" clearable :style="{width: '100%'}">
+          </el-input>
         </el-form-item>
-        <el-form-item label="修改时间" prop="updateTime">
-          <el-date-picker clearable
-                          v-model="form.updateTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="选择修改时间">
-          </el-date-picker>
+        <el-form-item label="排序" prop="orderNum">
+          <el-input-number v-model="form.orderNum" placeholder="排序"></el-input-number>
         </el-form-item>
-        <el-form-item label="产品编码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入产品编码" />
-        </el-form-item>
-        <el-form-item label="层级路径" prop="ancestors">
-          <el-input v-model="form.ancestors" placeholder="请输入层级路径" />
-        </el-form-item>
-        <el-form-item label="" prop="logo">
-          <el-input v-model="form.logo" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="" prop="productCount">
-          <el-input v-model="form.productCount" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="" prop="orderNum">
-          <el-input v-model="form.orderNum" placeholder="请输入" />
+        <el-form-item label="分类图标" prop="logo" required>
+          <file-upload ref="logo" :file-list="logofileList" :uploadFileUrl="logoAction"
+                     :fileType="['jpg','png','jpeg']"
+                     @input="handleUploadSuccess">
+          </file-upload>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div slot="footer">
+        <el-button @click="cancel">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-  import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/product/category";
+  import {listCategory, getCategory, delCategory, addCategory, updateCategory} from "@/api/product/category";
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
   export default {
     name: "Category",
+    dicts: ['sys_normal_disable'],
     components: {
       Treeselect
     },
@@ -230,11 +177,41 @@
           status: null,
           orderNum: null
         },
-        // 表单参数
-        form: {},
-        // 表单校验
+        form: {
+          name: undefined,
+          parentId: [""],
+          code: undefined,
+          orderNum: 0,
+          logo: null,
+        },
         rules: {
-        }
+          name: [{
+            required: true,
+            message: '请输入分类名称',
+            trigger: 'blur'
+          }],
+          parentId: [],
+          code: [{
+            required: true,
+            message: '请输入分类编码',
+            trigger: 'blur'
+          }, {
+            pattern: /[\d]+/,
+            message: '分类编码只能为数组串',
+            trigger: 'blur'
+          }],
+          orderNum: [{
+            required: true,
+            message: '排序',
+            trigger: 'blur'
+          }],
+        },
+        logoAction: process.env.VUE_APP_BASE_API + '/api/common/file/upload?module=商品分类管理&function=分类图标上传',
+        logofileList: [],
+        parentIdOptions: [],
+        parentIdProps: {
+          "multiple": false
+        },
       };
     },
     created() {
@@ -249,6 +226,7 @@
           this.loading = false;
         });
       },
+
       /** 转换商品分类数据结构 */
       normalizer(node) {
         if (node.children && !node.children.length) {
@@ -264,7 +242,7 @@
       getTreeselect() {
         listCategory().then(response => {
           this.categoryOptions = [];
-          const data = { id: 0, name: '顶级节点', children: [] };
+          const data = {id: 0, name: '顶级节点', children: []};
           data.children = this.handleTree(response.data, "id", "parendId");
           this.categoryOptions.push(data);
         });
@@ -280,15 +258,9 @@
           id: null,
           parentId: null,
           name: null,
-          level: null,
-          createTime: null,
-          updateTime: null,
           code: null,
-          ancestors: null,
           logo: null,
-          productCount: null,
-          status: 0,
-          orderNum: null
+          orderNum:0
         };
         this.resetForm("form");
       },
@@ -336,7 +308,7 @@
       },
       /** 提交按钮 */
       submitForm() {
-        this.$refs["form"].validate(valid => {
+        this.$refs["category"].validate(valid => {
           if (valid) {
             if (this.form.id != null) {
               updateCategory(this.form).then(response => {
@@ -356,12 +328,17 @@
       },
       /** 删除按钮操作 */
       handleDelete(row) {
-        this.$modal.confirm('是否确认删除商品分类编号为"' + row.id + '"的数据项？').then(function() {
+        this.$modal.confirm('是否确认删除商品分类编号为"' + row.id + '"的数据项？').then(function () {
           return delCategory(row.id);
         }).then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
-        }).catch(() => {});
+        }).catch(() => {
+        });
+      },
+      handleUploadSuccess(res) {
+        // 获取富文本组件实例
+        this.form.logo = res.url
       }
     }
   };

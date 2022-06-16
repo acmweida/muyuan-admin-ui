@@ -234,6 +234,12 @@
           <el-form-item v-if="activeData.action !== undefined" label="上传地址">
             <el-input v-model="activeData.action" placeholder="请输入上传地址" clearable />
           </el-form-item>
+          <el-form-item v-if="activeData.module !== undefined" label="上传系统模块名称">
+            <el-input v-model="activeData.module" placeholder="请输入上传系统模块名称" clearable />
+          </el-form-item>
+          <el-form-item v-if="activeData.function !== undefined" label="上传功能名称">
+            <el-input v-model="activeData.function" placeholder="请输入上传功能名称" clearable />
+          </el-form-item>
           <el-form-item v-if="activeData['list-type'] !== undefined" label="列表类型">
             <el-radio-group v-model="activeData['list-type']" size="small">
               <el-radio-button label="text">

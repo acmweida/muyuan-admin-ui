@@ -28,7 +28,7 @@
     <transition-group class="upload-file-list el-upload-list el-upload-list--text" name="el-fade-in-linear" tag="ul">
       <li :key="file.url" class="el-upload-list__item ele-upload-list__item-content" v-for="(file, index) in fileList">
         <el-link :href="file.url" :underline="false" target="_blank">
-          <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
+          <span class="el-icon-document"> {{ file.name }} </span>
         </el-link>
         <div class="ele-upload-list__item-content-action">
           <el-link :underline="false" @click="handleDelete(index)" type="danger">删除</el-link>
@@ -45,11 +45,19 @@ export default {
   name: "FileUpload",
   props: {
     // 值
+    uploadFileUrl: {
+      type:String,
+      default: process.env.VUE_APP_BASE_API + "/api/common/file/upload", // 上传的图片服务器地址
+    },
     value: [String, Object, Array],
     // 数量限制
     limit: {
       type: Number,
       default: 5,
+    },
+    accept:{
+      type:String,
+      default:"*"
     },
     // 大小限制(MB)
     fileSize: {
@@ -69,7 +77,6 @@ export default {
   },
   data() {
     return {
-      uploadFileUrl: process.env.VUE_APP_BASE_API + "/file/upload", // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),
       },
@@ -146,30 +153,28 @@ export default {
     // 上传成功回调
     handleUploadSuccess(res, file) {
       this.$message.success("上传成功");
-      this.fileList.push({ name: res.data.url, url: res.data.url });
-      this.$emit("input", this.listToString(this.fileList));
+      this.fileList.push({ name: res.data.name, url: res.data.url });
+      this.$emit("input", this.transfor(this.fileList));
     },
     // 删除文件
     handleDelete(index) {
       this.fileList.splice(index, 1);
-      this.$emit("input", this.listToString(this.fileList));
+      this.$emit("input", this.transfor(this.fileList));
     },
     // 获取文件名称
     getFileName(name) {
       if (name.lastIndexOf("/") > -1) {
         return name.slice(name.lastIndexOf("/") + 1).toLowerCase();
       } else {
-        return "";
+        return ;
       }
     },
     // 对象转成指定字符串分隔
-    listToString(list, separator) {
-      let strs = "";
-      separator = separator || ",";
-      for (let i in list) {
-        strs += list[i].url + separator;
-      }
-      return strs != '' ? strs.substr(0, strs.length - 1) : '';
+    transfor(list) {
+        if (list.length == 1) {
+          return list[0];
+        }
+        return list;
     }
   }
 };
