@@ -164,11 +164,11 @@
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="字典名称" prop="dictName">
-          <el-input v-model="form.dictName" placeholder="请输入字典名称" />
+        <el-form-item label="字典名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入字典名称" />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictType">
-          <el-input v-model="form.dictType" placeholder="请输入字典类型" />
+        <el-form-item label="字典类型" prop="type">
+          <el-input v-model="form.type" placeholder="请输入字典类型" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -231,10 +231,10 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        dictName: [
+        name: [
           { required: true, message: "字典名称不能为空", trigger: "blur" }
         ],
-        dictType: [
+        type: [
           { required: true, message: "字典类型不能为空", trigger: "blur" }
         ]
       }

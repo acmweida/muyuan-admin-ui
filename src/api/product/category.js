@@ -9,6 +9,14 @@ export function listCategory(query) {
   })
 }
 
+export function treeSelect(query) {
+  return request({
+    url: '/api/product/category/treeSelect',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询商品分类详细
 export function getCategory(id) {
   return request({

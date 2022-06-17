@@ -157,7 +157,7 @@
           <el-input v-model="form.cssClass" placeholder="请输入样式属性" />
         </el-form-item>
         <el-form-item label="显示排序" prop="dictSort">
-          <el-input-number v-model="form.sort" controls-position="right" :min="0" />
+          <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item label="回显样式" prop="listClass">
           <el-select v-model="form.listClass">
@@ -266,7 +266,7 @@ export default {
         value: [
           { required: true, message: "数据键值不能为空", trigger: "blur" }
         ],
-        sort: [
+        orderNum: [
           { required: true, message: "数据顺序不能为空", trigger: "blur" }
         ]
       }
@@ -309,12 +309,11 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        dictCode: undefined,
-        dictLabel: undefined,
-        dictValue: undefined,
+        label: undefined,
+        value: undefined,
         cssClass: undefined,
         listClass: 'default',
-        dictSort: 0,
+        orderNum: 0,
         status: "0",
         remark: undefined
       };
@@ -352,9 +351,9 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const dictCode = row.dictCode || this.ids
+      const dictCode = row.id || this.ids
       getData(dictCode).then(response => {
-        this.form = response.data;
+        this.form = response;
         this.open = true;
         this.title = "修改字典数据";
       });
@@ -363,7 +362,7 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.dictCode != undefined) {
+          if (this.form.id != undefined) {
             updateData(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;

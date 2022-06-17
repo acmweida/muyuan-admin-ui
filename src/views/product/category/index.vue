@@ -67,10 +67,9 @@
       <el-table-column label="分类名称" align="center" prop="name"/>
       <el-table-column label="产品编码" align="center" prop="code"/>
       <el-table-column label="分类图标" align="center" prop="logo"/>
-      <el-table-column label="商品数量" align="center" prop="productCount"/>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.product_category_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="" align="center" prop="orderNum"/>
@@ -112,6 +111,7 @@
         </el-form-item>
         <el-form-item label="父分类" prop="parentId">
           <el-cascader v-model="form.parentId" :options="parentIdOptions" :props="parentIdProps"
+                       :async="true"
                        :style="{width: '100%'}" placeholder="请选择父分类" filterable clearable></el-cascader>
         </el-form-item>
         <el-form-item label="分类编码" prop="code">
@@ -123,8 +123,8 @@
         </el-form-item>
         <el-form-item label="分类图标" prop="logo" required>
           <file-upload ref="logo" :file-list="logofileList" :uploadFileUrl="logoAction"
-                     :fileType="['jpg','png','jpeg']"
-                     @input="handleUploadSuccess">
+                       :fileType="['jpg','png','jpeg']"
+                       @input="handleUploadSuccess">
           </file-upload>
         </el-form-item>
       </el-form>
@@ -137,13 +137,13 @@
 </template>
 
 <script>
-  import {listCategory, getCategory, delCategory, addCategory, updateCategory} from "@/api/product/category";
+  import {listCategory, getCategory, delCategory, addCategory, updateCategory,treeSelect} from "@/api/product/category";
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
   export default {
     name: "Category",
-    dicts: ['sys_normal_disable'],
+    dicts: ['product_category_status'],
     components: {
       Treeselect
     },
@@ -210,7 +210,17 @@
         logofileList: [],
         parentIdOptions: [],
         parentIdProps: {
-          "multiple": false
+          lazy: true,
+          lazyLoad(node, resolve) {
+            console.log(node);
+            var param = {
+              "parentId": node.root ? 0 : node.id
+            }
+
+            treeSelect(param).then(data => {
+              resolve(data);
+            })
+          }
         },
       };
     },
@@ -219,6 +229,9 @@
     },
     methods: {
       /** 查询商品分类列表 */
+      loadCategory() {
+        debugger
+      },
       getList() {
         this.loading = true;
         listCategory(this.queryParams).then(response => {
@@ -243,7 +256,7 @@
         listCategory().then(response => {
           this.categoryOptions = [];
           const data = {id: 0, name: '顶级节点', children: []};
-          data.children = this.handleTree(response.data, "id", "parendId");
+          data.children = this.handleTree(response.data, "id", "parentId");
           this.categoryOptions.push(data);
         });
       },
@@ -260,7 +273,7 @@
           name: null,
           code: null,
           logo: null,
-          orderNum:0
+          orderNum: 0
         };
         this.resetForm("form");
       },

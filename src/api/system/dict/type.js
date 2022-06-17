@@ -20,7 +20,7 @@ export function getType(id) {
 // 新增字典类型
 export function addType(data) {
   return request({
-    url: '/system/dict/type',
+    url: '/api/system/dictType',
     method: 'post',
     data: data
   })
