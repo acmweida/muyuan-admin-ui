@@ -66,7 +66,11 @@
     >
       <el-table-column label="分类名称" align="center" prop="name"/>
       <el-table-column label="产品编码" align="center" prop="code"/>
-      <el-table-column label="分类图标" align="center" prop="logo"/>
+      <el-table-column label="分类图标" align="center" prop="logo">
+        <template slot-scope="scope">
+          <image-preview :src="file(scope.row.logo)" :width="32" :height="32" />
+        </template>
+      </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.product_category_status" :value="scope.row.status"/>
@@ -137,7 +141,14 @@
 </template>
 
 <script>
-  import {listCategory, getCategory, delCategory, addCategory, updateCategory,treeSelect} from "@/api/product/category";
+  import {
+    listCategory,
+    getCategory,
+    delCategory,
+    addCategory,
+    updateCategory,
+    treeSelect
+  } from "@/api/product/category";
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -179,7 +190,7 @@
         },
         form: {
           name: undefined,
-          parentId: [""],
+          parentId: null,
           code: undefined,
           orderNum: 0,
           logo: null,
@@ -190,7 +201,6 @@
             message: '请输入分类名称',
             trigger: 'blur'
           }],
-          parentId: [],
           code: [{
             required: true,
             message: '请输入分类编码',
@@ -211,10 +221,11 @@
         parentIdOptions: [],
         parentIdProps: {
           lazy: true,
+          checkStrictly:true,
+          emitPath:false,
           lazyLoad(node, resolve) {
-            console.log(node);
             var param = {
-              "parentId": node.root ? 0 : node.id
+              "parentId": node.root ? 0 : node.data.value
             }
 
             treeSelect(param).then(data => {
@@ -229,13 +240,13 @@
     },
     methods: {
       /** 查询商品分类列表 */
-      loadCategory() {
-        debugger
+      file(url) {
+        return process.env.VUE_APP_BASE_API+"/api/common/file/"+url;
       },
       getList() {
         this.loading = true;
         listCategory(this.queryParams).then(response => {
-          this.categoryList = this.handleTree(response, "id", "parendId");
+          this.categoryList = this.handleTree(response, "id", "parentId");
           this.loading = false;
         });
       },
@@ -256,7 +267,7 @@
         listCategory().then(response => {
           this.categoryOptions = [];
           const data = {id: 0, name: '顶级节点', children: []};
-          data.children = this.handleTree(response.data, "id", "parentId");
+          data.children = this.handleTree(response, "id", "parentId");
           this.categoryOptions.push(data);
         });
       },
@@ -291,9 +302,9 @@
         this.reset();
         this.getTreeselect();
         if (row != null && row.id) {
-          this.form.parendId = row.id;
+          this.form.parentId = row.id;
         } else {
-          this.form.parendId = 0;
+          this.form.parentId = 0;
         }
         this.open = true;
         this.title = "添加商品分类";
@@ -311,10 +322,10 @@
         this.reset();
         this.getTreeselect();
         if (row != null) {
-          this.form.parendId = row.id;
+          this.form.parentId = row.id;
         }
         getCategory(row.id).then(response => {
-          this.form = response.data;
+          this.form = response;
           this.open = true;
           this.title = "修改商品分类";
         });
@@ -330,18 +341,20 @@
                 this.getList();
               });
             } else {
-              addCategory(this.form).then(response => {
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
+              console.log(this.form)
+              debugger
+              // addCategory(this.form).then(response => {
+              //   this.$modal.msgSuccess("新增成功");
+              //   this.open = false;
+              //   this.getList();
+              // });
             }
           }
         });
       },
       /** 删除按钮操作 */
       handleDelete(row) {
-        this.$modal.confirm('是否确认删除商品分类编号为"' + row.id + '"的数据项？').then(function () {
+        this.$modal.confirm('是否确认删除商品分类编号为"' + row.code + '"的数据项？').then(function () {
           return delCategory(row.id);
         }).then(() => {
           this.getList();
