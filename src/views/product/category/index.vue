@@ -113,13 +113,13 @@
           <el-input v-model="form.name" placeholder="请输入分类名称" clearable :style="{width: '100%'}">
           </el-input>
         </el-form-item>
-        <el-form-item label="父分类" prop="parentId">
+        <el-form-item label="父分类" prop="parentId" v-if="action == 'add'">
           <el-cascader v-model="form.parentId" :options="parentIdOptions" :props="parentIdProps"
                        :async="true"
                        :style="{width: '100%'}" placeholder="请选择父分类" filterable clearable></el-cascader>
         </el-form-item>
-        <el-form-item label="分类编码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入分类编码" clearable :style="{width: '100%'}">
+        <el-form-item label="分类编码" prop="code" v-if="action == 'update'">
+          <el-input v-model="form.code" readonly :style="{width: '100%'}">
           </el-input>
         </el-form-item>
         <el-form-item label="排序" prop="orderNum">
@@ -201,15 +201,6 @@
             message: '请输入分类名称',
             trigger: 'blur'
           }],
-          code: [{
-            required: true,
-            message: '请输入分类编码',
-            trigger: 'blur'
-          }, {
-            pattern: /[\d]+/,
-            message: '分类编码只能为数组串',
-            trigger: 'blur'
-          }],
           orderNum: [{
             required: true,
             message: '排序',
@@ -233,6 +224,7 @@
             })
           }
         },
+        action:'',
       };
     },
     created() {
@@ -263,14 +255,14 @@
         };
       },
       /** 查询商品分类下拉树结构 */
-      getTreeselect() {
-        listCategory().then(response => {
-          this.categoryOptions = [];
-          const data = {id: 0, name: '顶级节点', children: []};
-          data.children = this.handleTree(response, "id", "parentId");
-          this.categoryOptions.push(data);
-        });
-      },
+      // getTreeselect() {
+      //   listCategory().then(response => {
+      //     this.categoryOptions = [];
+      //     const data = {id: 0, name: '顶级节点', children: []};
+      //     data.children = this.handleTree(response, "id", "parentId");
+      //     this.categoryOptions.push(data);
+      //   });
+      // },
       // 取消按钮
       cancel() {
         this.open = false;
@@ -300,7 +292,8 @@
       /** 新增按钮操作 */
       handleAdd(row) {
         this.reset();
-        this.getTreeselect();
+        this.action = 'add'
+        // this.getTreeselect();
         if (row != null && row.id) {
           this.form.parentId = row.id;
         } else {
@@ -320,7 +313,8 @@
       /** 修改按钮操作 */
       handleUpdate(row) {
         this.reset();
-        this.getTreeselect();
+        this.action='update'
+        // this.getTreeselect();
         if (row != null) {
           this.form.parentId = row.id;
         }
@@ -342,12 +336,11 @@
               });
             } else {
               console.log(this.form)
-              debugger
-              // addCategory(this.form).then(response => {
-              //   this.$modal.msgSuccess("新增成功");
-              //   this.open = false;
-              //   this.getList();
-              // });
+              addCategory(this.form).then(response => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
             }
           }
         });
