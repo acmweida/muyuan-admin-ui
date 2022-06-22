@@ -76,7 +76,7 @@
           <dict-tag :options="dict.type.product_category_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" prop="orderNum"/>
+      <el-table-column label="排序" align="center" prop="orderNum"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -115,7 +115,6 @@
         </el-form-item>
         <el-form-item label="父分类" prop="parentId" v-if="action == 'add'">
           <el-cascader v-model="form.parentId" :options="parentIdOptions" :props="parentIdProps"
-                       :async="true"
                        :style="{width: '100%'}" placeholder="请选择父分类" filterable clearable></el-cascader>
         </el-form-item>
         <el-form-item label="分类编码" prop="code" v-if="action == 'update'">
@@ -213,7 +212,7 @@
         parentIdProps: {
           lazy: true,
           checkStrictly:true,
-          emitPath:false,
+          emitPath:true,
           lazyLoad(node, resolve) {
             var param = {
               "parentId": node.root ? 0 : node.data.value
@@ -294,13 +293,14 @@
         this.reset();
         this.action = 'add'
         // this.getTreeselect();
+
+        this.open = true;
+        this.title = "添加商品分类";
         if (row != null && row.id) {
           this.form.parentId = row.id;
         } else {
-          this.form.parentId = 0;
+          this.form.parentId = null;
         }
-        this.open = true;
-        this.title = "添加商品分类";
       },
       /** 展开/折叠操作 */
       toggleExpandAll() {
@@ -335,7 +335,6 @@
                 this.getList();
               });
             } else {
-              console.log(this.form)
               addCategory(this.form).then(response => {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
