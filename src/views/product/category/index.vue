@@ -61,6 +61,8 @@
       v-loading="loading"
       :data="categoryList"
       row-key="id"
+      lazy
+      :load="getList"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
@@ -102,6 +104,15 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['product:category:remove']"
           >删除
+          </el-button>
+          <el-button
+            v-if="scope.row.level == 3"
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['product:category:remove']"
+          >属性编辑
           </el-button>
         </template>
       </el-table-column>
@@ -234,12 +245,21 @@
       file(url) {
         return process.env.VUE_APP_BASE_API+"/api/common/file/"+url;
       },
-      getList() {
+      getList(tree, treeNode, resolve) {
         this.loading = true;
-        listCategory(this.queryParams).then(response => {
-          this.categoryList = this.handleTree(response, "id", "parentId");
-          this.loading = false;
-        });
+        if (tree === undefined) {
+          this.queryParams.parentId = 0;
+          listCategory(this.queryParams).then(response => {
+            this.categoryList = response;
+            this.loading = false;
+          });
+        } else {
+          this.queryParams.parentId = tree.id
+          listCategory(this.queryParams).then(response => {
+            resolve(response);
+            this.loading = false;
+          });
+        }
       },
 
       /** 转换商品分类数据结构 */
@@ -296,8 +316,8 @@
 
         this.open = true;
         this.title = "添加商品分类";
-        if (row != null && row.id) {
-          this.form.parentId = row.id;
+        if (row != null && row.ancestors) {
+          this.form.parentId = row.ancestors.split(",");
         } else {
           this.form.parentId = null;
         }
@@ -315,9 +335,9 @@
         this.reset();
         this.action='update'
         // this.getTreeselect();
-        if (row != null) {
-          this.form.parentId = row.id;
-        }
+        // if (row != null) {
+        //   this.form.parentId = row.id;
+        // }
         getCategory(row.id).then(response => {
           this.form = response;
           this.open = true;
@@ -326,16 +346,21 @@
       },
       /** 提交按钮 */
       submitForm() {
+        var form = Object.assign({},this.form);
+        if (form.parentId) {
+          form.parentId = form.parentId.slice(-1)[0]
+        }
+
         this.$refs["category"].validate(valid => {
           if (valid) {
-            if (this.form.id != null) {
-              updateCategory(this.form).then(response => {
+            if (form.id != null) {
+              updateCategory(form).then(response => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
                 this.getList();
               });
             } else {
-              addCategory(this.form).then(response => {
+              addCategory(form).then(response => {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
                 this.getList();
