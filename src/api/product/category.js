@@ -25,6 +25,13 @@ export function getCategory(id) {
   })
 }
 
+export function getCategoryByCode(code) {
+  return request({
+    url: '/api/product/category/3th/' + code,
+    method: 'get'
+  })
+}
+
 // 新增商品分类
 export function addCategory(data) {
   return request({

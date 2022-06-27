@@ -72,16 +72,6 @@
           v-hasPermi="['product:category:attribute:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['product:category:attribute:export']"
-        >导出</el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -90,7 +80,7 @@
       <el-table-column label="" align="center" prop="id" />
       <el-table-column label="属性名称" align="center" prop="name" />
       <el-table-column label="商品分类ID" align="center" prop="categoryId" />
-      <el-table-column label="属性类型 1:关键属性 2:销售属性 3:非关键属性" align="center" prop="type" />
+      <el-table-column label="属性类型" align="center" prop="type" />
       <el-table-column label="" align="center" prop="creator" />
       <el-table-column label="" align="center" prop="updater" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -210,11 +200,11 @@
       };
     },
     created() {
-      this.getList();
+      this.get();
     },
     methods: {
       /** 查询商品分类属性列表 */
-      getList() {
+      get() {
         this.loading = true;
         listAttribute(this.queryParams).then(response => {
           this.attributeList = response.rows;
@@ -246,7 +236,7 @@
       /** 搜索按钮操作 */
       handleQuery() {
         this.queryParams.pageNum = 1;
-        this.getList();
+        this.get();
       },
       /** 重置按钮操作 */
       resetQuery() {

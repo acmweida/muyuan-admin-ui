@@ -121,6 +121,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/product/goods-category',
+    component: Layout,
+    hidden: true,
+    permissions: ['product:category:attribute:edit'],
+    children: [
+      {
+        path: 'attribute/:categoryCode(\\d+)',
+        component: () => import('@/views/product/category/attribute/editAttribute'),
+        name: 'ProductEdit',
+        meta: { title: '分类属性编辑', activeMenu: '/product/category' }
+      }
+    ]
+  },
+  {
     path: '/system/dict-data',
     component: Layout,
     hidden: true,
