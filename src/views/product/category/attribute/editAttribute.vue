@@ -1,43 +1,8 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="属性名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入属性名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="商品分类ID" prop="categoryId">
-        <el-input
-          v-model="queryParams.categoryId"
-          placeholder="请输入商品分类ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="" prop="creator">
-        <el-input
-          v-model="queryParams.creator"
-          placeholder="请输入"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="" prop="updater">
-        <el-input
-          v-model="queryParams.updater"
-          placeholder="请输入"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <el-descriptions title="商品分类信息" >
+      <el-descriptions-item label="名称"  >手机</el-descriptions-item>
+    </el-descriptions>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -75,11 +40,9 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="attributeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="normalAttributeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="" align="center" prop="id" />
       <el-table-column label="属性名称" align="center" prop="name" />
-      <el-table-column label="商品分类ID" align="center" prop="categoryId" />
       <el-table-column label="属性类型" align="center" prop="type" />
       <el-table-column label="" align="center" prop="creator" />
       <el-table-column label="" align="center" prop="updater" />
@@ -158,7 +121,7 @@
 </template>
 
 <script>
-  import { listAttribute, getAttribute, delAttribute, addAttribute, updateAttribute } from "@/api/product/attribute";
+  import { getCategoryAttribute, getAttribute, delAttribute, addAttribute, updateAttribute } from "@/api/product/attribute";
 
   export default {
     name: "Attribute",
@@ -177,7 +140,11 @@
         // 总条数
         total: 0,
         // 商品分类属性表格数据
-        attributeList: [],
+        commonAttributeList: [],
+        sqleAttributeList: [],
+        keyAttributeList: [],
+        normalAttributeList:[],
+        category:{},
         // 弹出层标题
         title: "",
         // 是否显示弹出层
@@ -206,8 +173,9 @@
       /** 查询商品分类属性列表 */
       get() {
         this.loading = true;
-        listAttribute(this.queryParams).then(response => {
-          this.attributeList = response.rows;
+        getCategoryAttribute(this.queryParams).then(response => {
+          this.category = response;
+          this.normalAttributeList = response.normalAttributeList;
           this.total = response.total;
           this.loading = false;
         });

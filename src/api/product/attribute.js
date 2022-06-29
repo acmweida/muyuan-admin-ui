@@ -1,11 +1,10 @@
 import request from '@/utils/request'
 
 // 查询商品分类属性列表
-export function listAttribute(query) {
+export function getCategoryAttribute(id) {
   return request({
-    url: '/api/product/category/attribute/list',
-    method: 'get',
-    params: query
+    url: '/api/product/category/attribute/detail/'+id,
+    method: 'get'
   })
 }
 
