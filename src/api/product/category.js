@@ -57,3 +57,12 @@ export function delCategory(id) {
     method: 'delete'
   })
 }
+
+
+// 查询商品分类属性列表
+export function getCategoryAttribute(id) {
+  return request({
+    url: '/api/product/category/detail/'+id,
+    method: 'get'
+  })
+}

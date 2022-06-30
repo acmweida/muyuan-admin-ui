@@ -1,12 +1,6 @@
 import request from '@/utils/request'
 
-// 查询商品分类属性列表
-export function getCategoryAttribute(id) {
-  return request({
-    url: '/api/product/category/attribute/detail/'+id,
-    method: 'get'
-  })
-}
+
 
 // 查询商品分类属性详细
 export function getAttribute(id) {

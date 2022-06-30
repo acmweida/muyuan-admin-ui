@@ -1,115 +1,95 @@
 <template>
   <div class="app-container">
-    <el-descriptions title="商品分类信息" >
-      <el-descriptions-item label="名称"  >手机</el-descriptions-item>
+    <el-descriptions title="商品分类信息">
+      <el-descriptions-item label="名称">{{category.name}}</el-descriptions-item>
+      <el-descriptions-item label="编码">{{category.code}}</el-descriptions-item>
+      <el-descriptions-item label="状态">
+        <dict-tag :options="dict.type.product_category_status" :value="category.status"/>
+      </el-descriptions-item>
     </el-descriptions>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['product:category:attribute:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['product:category:attribute:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['product:category:attribute:remove']"
-        >删除</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    <el-divider/>
 
-    <el-table v-loading="loading" :data="normalAttributeList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="属性名称" align="center" prop="name" />
-      <el-table-column label="属性类型" align="center" prop="type" />
-      <el-table-column label="" align="center" prop="creator" />
-      <el-table-column label="" align="center" prop="updater" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['product::attribute:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['product:attribute:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-descriptions title="分类属性"/>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <div class="attribute">
+      <div>
+        <el-form>
+          <template v-for="(item,index) in attributeList" class="layout">
+            <el-form-item label-width="100px" label="属性名称">
+              <el-input v-model="item.name" style="width: 200px"/>
+            </el-form-item>
+            <el-form-item label-width="100px" label="取值类型">
+              <el-select v-model="item.inputType" placeholder="请选择">
+                <el-option
+                  v-for="item in dict.type.product_category_attribute_input_type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label-width="100px" label="属性类型">
+              <el-checkbox-group v-model="item.type">
+                <el-checkbox label="1">公共</el-checkbox>
+                <el-checkbox label="2">销售</el-checkbox>
+                <el-checkbox label="4">关键</el-checkbox>
+                <el-checkbox label="8">其他</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label-width="80px">
+              <el-button
+                size="mini"
+                type="success"
+                icon="el-icon-edit"
+                @click="handleUpdate(item)"
+                v-hasPermi="['product:category:attribute:edit']"
+              >修改
+              </el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                icon="el-icon-delete"
+                @click="handleDelete(item)"
+                v-hasPermi="['product:category:attribute:remove']"
+              >删除
+              </el-button>
+            </el-form-item>
+          </template>
+        </el-form>
+      </div>
+      <div>
+        <el-form>
+          <el-form-item>
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAdd"
+              v-hasPermi="['product:category:attribute:add']"
+            >新增
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
 
     <!-- 添加或修改商品分类属性对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="属性名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入属性名称" />
+        <el-form-item  label="属性名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入属性名称"/>
         </el-form-item>
-        <el-form-item label="商品分类ID" prop="categoryId">
-          <el-input v-model="form.categoryId" placeholder="请输入商品分类ID" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker clearable
-                          v-model="form.createTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择创建时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="修改时间" prop="updateTime">
-          <el-date-picker clearable
-                          v-model="form.updateTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择修改时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="" prop="createBy">
-          <el-input v-model="form.createBy" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="" prop="creator">
-          <el-input v-model="form.creator" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="" prop="updateBy">
-          <el-input v-model="form.updateBy" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="" prop="updater">
-          <el-input v-model="form.updater" placeholder="请输入" />
+        <el-form-item required label-width="80px" label="取值类型">
+          <el-select v-model="form.inputType" placeholder="请选择">
+            <el-option
+              v-for="item in dict.type.product_category_attribute_input_type"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -121,10 +101,12 @@
 </template>
 
 <script>
-  import { getCategoryAttribute, getAttribute, delAttribute, addAttribute, updateAttribute } from "@/api/product/attribute";
+  import {getAttribute, delAttribute, addAttribute, updateAttribute} from "@/api/product/attribute";
+  import {getCategoryAttribute} from "@/api/product/category";
 
   export default {
     name: "Attribute",
+    dicts: ['product_category_status',"product_category_attribute_input_type"],
     data() {
       return {
         // 遮罩层
@@ -140,11 +122,8 @@
         // 总条数
         total: 0,
         // 商品分类属性表格数据
-        commonAttributeList: [],
-        sqleAttributeList: [],
-        keyAttributeList: [],
-        normalAttributeList:[],
-        category:{},
+        attributeList: [],
+        category: {},
         // 弹出层标题
         title: "",
         // 是否显示弹出层
@@ -154,15 +133,28 @@
           pageNum: 1,
           pageSize: 10,
           name: null,
-          categoryId: null,
+          categoryCode: null,
           type: null,
-          creator: null,
-          updater: null
         },
         // 表单参数
-        form: {},
+        form: {
+          name:null,
+          type:null,
+          categoryCode:null,
+          inputType:null
+        },
         // 表单校验
         rules: {
+          name: [{
+            required: true,
+            message: '请输入属性名称',
+            trigger: 'blur'
+          }],
+          inputType: [{
+            required: true,
+            message: '请选择输入类型',
+            trigger: 'blur'
+          }]
         }
       };
     },
@@ -173,10 +165,10 @@
       /** 查询商品分类属性列表 */
       get() {
         this.loading = true;
-        getCategoryAttribute(this.queryParams).then(response => {
+        getCategoryAttribute(this.$route.params.categoryCode).then(response => {
           this.category = response;
-          this.normalAttributeList = response.normalAttributeList;
-          this.total = response.total;
+          this.attributeList = response.attributeList;
+          this.form.categoryCode = response.code;
           this.loading = false;
         });
       },
@@ -214,7 +206,7 @@
       // 多选框选中数据
       handleSelectionChange(selection) {
         this.ids = selection.map(item => item.id)
-        this.single = selection.length!==1
+        this.single = selection.length !== 1
         this.multiple = !selection.length
       },
       /** 新增按钮操作 */
@@ -232,6 +224,12 @@
           this.open = true;
           this.title = "修改商品分类属性";
         });
+      },
+      removeDomain(item) {
+        var index = this.dynamicValidateForm.domains.indexOf(item)
+        if (index !== -1) {
+          this.dynamicValidateForm.domains.splice(index, 1)
+        }
       },
       /** 提交按钮 */
       submitForm() {
@@ -256,12 +254,13 @@
       /** 删除按钮操作 */
       handleDelete(row) {
         const ids = row.id || this.ids;
-        this.$modal.confirm('是否确认删除商品分类属性编号为"' + ids + '"的数据项？').then(function() {
+        this.$modal.confirm('是否确认删除商品分类属性编号为"' + ids + '"的数据项？').then(function () {
           return delAttribute(ids);
         }).then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
-        }).catch(() => {});
+        }).catch(() => {
+        });
       },
       /** 导出按钮操作 */
       handleExport() {
@@ -272,3 +271,15 @@
     }
   };
 </script>
+
+<style>
+  .attribute {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 75% auto;
+  }
+
+  .layout {
+    display: flex;
+  }
+</style>
