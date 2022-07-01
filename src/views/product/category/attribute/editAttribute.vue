@@ -14,48 +14,46 @@
 
     <div class="attribute">
       <div>
-        <el-form>
-          <template v-for="(item,index) in attributeList" class="layout">
-            <el-form-item label-width="100px" label="属性名称">
-              <el-input v-model="item.name" style="width: 200px"/>
-            </el-form-item>
-            <el-form-item label-width="100px" label="取值类型">
-              <el-select v-model="item.inputType" placeholder="请选择">
-                <el-option
-                  v-for="item in dict.type.product_category_attribute_input_type"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label-width="100px" label="属性类型">
-              <el-checkbox-group v-model="item.type">
-                <el-checkbox label="1">公共</el-checkbox>
-                <el-checkbox label="2">销售</el-checkbox>
-                <el-checkbox label="4">关键</el-checkbox>
-                <el-checkbox label="8">其他</el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <el-form-item label-width="80px">
-              <el-button
-                size="mini"
-                type="success"
-                icon="el-icon-edit"
-                @click="handleUpdate(item)"
-                v-hasPermi="['product:category:attribute:edit']"
-              >修改
-              </el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-delete"
-                @click="handleDelete(item)"
-                v-hasPermi="['product:category:attribute:remove']"
-              >删除
-              </el-button>
-            </el-form-item>
-          </template>
+        <el-form :ref="index" :model="item" :rules="rules" v-for="(item,index) in attributeList" class="layout" :key="index">
+          <el-form-item required label-width="100px" label="属性名称" prop="name">
+            <el-input v-model="item.name" style="width: 200px"/>
+          </el-form-item>
+          <el-form-item required label-width="100px" label="取值类型">
+            <el-select v-model="item.inputType" placeholder="请选择">
+              <el-option
+                v-for="item in dict.type.product_category_attribute_input_type"
+                :key="item.value"
+                :label="item.label"
+                :value="parseInt(item.value)">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label-width="100px" label="属性类型" prop="typeArray">
+            <el-checkbox-group v-model="typeArrays[index]" >
+              <el-checkbox label="1">公共</el-checkbox>
+              <el-checkbox label="2">销售</el-checkbox>
+              <el-checkbox label="4">关键</el-checkbox>
+              <el-checkbox label="8">其他</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label-width="80px">
+            <el-button
+              size="mini"
+              type="primary"
+              icon="el-icon-edit"
+              @click="handleUpdate(item,index)"
+              v-hasPermi="['product:category:attribute:edit']"
+            >保存
+            </el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="handleDelete(item)"
+              v-hasPermi="['product:category:attribute:remove']"
+            >删除
+            </el-button>
+          </el-form-item>
         </el-form>
       </div>
       <div>
@@ -78,7 +76,7 @@
     <!-- 添加或修改商品分类属性对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item  label="属性名称" prop="name">
+        <el-form-item label="属性名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入属性名称"/>
         </el-form-item>
         <el-form-item required label-width="80px" label="取值类型">
@@ -90,6 +88,14 @@
               :value="item.value">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label-width="80px" label="属性类型" prop="typeArray">
+          <el-checkbox-group v-model="form.typeArray">
+            <el-checkbox label="1">公共</el-checkbox>
+            <el-checkbox label="2">销售</el-checkbox>
+            <el-checkbox label="4">关键</el-checkbox>
+            <el-checkbox label="8">其他</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -106,7 +112,7 @@
 
   export default {
     name: "Attribute",
-    dicts: ['product_category_status',"product_category_attribute_input_type"],
+    dicts: ['product_category_status', "product_category_attribute_input_type", "product_category_attribute_type"],
     data() {
       return {
         // 遮罩层
@@ -119,6 +125,7 @@
         multiple: true,
         // 显示搜索条件
         showSearch: true,
+        typeArrays:[],
         // 总条数
         total: 0,
         // 商品分类属性表格数据
@@ -138,17 +145,18 @@
         },
         // 表单参数
         form: {
-          name:null,
-          type:null,
-          categoryCode:null,
-          inputType:null
+          name: null,
+          type: null,
+          categoryCode: null,
+          inputType: null,
+          typeArray: []
         },
         // 表单校验
         rules: {
           name: [{
             required: true,
             message: '请输入属性名称',
-            trigger: 'blur'
+            trigger: 'change'
           }],
           inputType: [{
             required: true,
@@ -167,7 +175,27 @@
         this.loading = true;
         getCategoryAttribute(this.$route.params.categoryCode).then(response => {
           this.category = response;
-          this.attributeList = response.attributeList;
+          var typeArrays =[];
+          for (var index in response.attributes) {
+            let type = response.attributes[index].type;
+            var typeArray = [];
+            if ((type & 1) === 1) {
+              typeArray.push("1");
+            }
+            if ((type & 2) === 2) {
+              typeArray.push("2");
+            }
+            if ((type & 4) === 4) {
+              typeArray.push("4");
+            }
+            if ((type & 8) === 8) {
+              typeArray.push("8");
+            }
+            response.attributes[index].typeArray = typeArray;
+            typeArrays.push(typeArray);
+          }
+          this.typeArrays = typeArrays;
+          this.attributeList = response.attributes;
           this.form.categoryCode = response.code;
           this.loading = false;
         });
@@ -182,14 +210,9 @@
         this.form = {
           id: null,
           name: null,
-          categoryId: null,
           type: null,
-          createTime: null,
-          updateTime: null,
-          createBy: null,
-          creator: null,
-          updateBy: null,
-          updater: null
+          inputType: null,
+          typeArray: []
         };
         this.resetForm("form");
       },
@@ -216,13 +239,21 @@
         this.title = "添加商品分类属性";
       },
       /** 修改按钮操作 */
-      handleUpdate(row) {
-        this.reset();
-        const id = row.id || this.ids
-        getAttribute(id).then(response => {
-          this.form = response.data;
-          this.open = true;
-          this.title = "修改商品分类属性";
+      handleUpdate(row, index) {
+        this.$refs[index][0].validate(valid => {
+          if (valid) {
+            row.categoryCode = this.category.code
+            var type = 0;
+            for (var i in this.typeArrays[index]) {
+              type += parseInt(this.typeArrays[index][i])
+            }
+            row.type = type;
+            updateAttribute(row).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.get();
+            });
+          }
         });
       },
       removeDomain(item) {
@@ -239,13 +270,19 @@
               updateAttribute(this.form).then(response => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
-                this.getList();
+                this.get();
               });
             } else {
+              this.form.categoryCode = this.category.code
+              var type = 0;
+              for (var index in this.form.inputType) {
+                type += parseInt(this.form.typeArray[index])
+              }
+              this.form.type = type;
               addAttribute(this.form).then(response => {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
-                this.getList();
+                this.get();
               });
             }
           }
