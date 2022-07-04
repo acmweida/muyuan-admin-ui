@@ -275,7 +275,7 @@
             } else {
               this.form.categoryCode = this.category.code
               var type = 0;
-              for (var index in this.form.inputType) {
+              for (var index in this.form.typeArray) {
                 type += parseInt(this.form.typeArray[index])
               }
               this.form.type = type;
@@ -294,7 +294,7 @@
         this.$modal.confirm('是否确认删除商品分类属性编号为"' + ids + '"的数据项？').then(function () {
           return delAttribute(ids);
         }).then(() => {
-          this.getList();
+          this.get();
           this.$modal.msgSuccess("删除成功");
         }).catch(() => {
         });

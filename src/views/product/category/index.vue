@@ -110,7 +110,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleUpdate(scope.row)"
+            @click="handleAttributeEdit(scope.row)"
             v-hasPermi="['product:category:remove']"
           >属性编辑
           </el-button>
@@ -357,13 +357,15 @@
               updateCategory(form).then(response => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
-                this.getList();
+                this.categoryList = []
+                this.getList(null);
               });
             } else {
               addCategory(form).then(response => {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
-                this.getList();
+                this.categoryList = []
+                this.getList(null);
               });
             }
           }
@@ -371,7 +373,7 @@
       },
       /** 删除按钮操作 */
       handleDelete(row) {
-        this.$modal.confirm('是否确认删除商品分类编号为"' + row.code + '"的数据项？').then(function () {
+        this.$modal.confirm('是否确认删除商品分类编号为"' + row.code + '"的数据项,其子分类也会被删除？').then(function () {
           return delCategory(row.id);
         }).then(() => {
           this.getList();
@@ -382,6 +384,9 @@
       handleUploadSuccess(res) {
         // 获取富文本组件实例
         this.form.logo = res.url
+      },
+      handleAttributeEdit(row) {
+        this.$router.push("/product/goods-category/attribute/" + row.code);
       }
     }
   };

@@ -354,6 +354,7 @@ export default {
     /** 查询菜单下拉树结构 */
     getTreeselect() {
       listMenu().then(data => {
+        debugger
         this.menuOptions = [];
         const menu = { id: 0, name: '主类目', children: [] };
         menu.children = this.handleTree(data, "id");
@@ -368,11 +369,11 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        menuId: undefined,
+        id: undefined,
         parentId: 0,
-        menuName: undefined,
+        name: undefined,
         icon: undefined,
-        menuType: "M",
+        type: "M",
         orderNum: undefined,
         frame: "1",
         cache: "0",
@@ -424,7 +425,7 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.id != undefined) {
+          if (this.form.id !== undefined) {
             updateMenu(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
