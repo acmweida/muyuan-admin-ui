@@ -9,53 +9,37 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="图标" prop="logo">
-        <el-input
-          v-model="queryParams.logo"
-          placeholder="请输入图标"
+      <el-form-item label="状态" prop="status">
+        <el-select
+          v-model="queryParams.status"
+          placeholder="字典状态"
           clearable
-          @keyup.enter.native="handleQuery"
-        />
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.product_brand_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="parseInt(dict.value)"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="排序" prop="ordernum">
-        <el-input
-          v-model="queryParams.ordernum"
-          placeholder="请输入排序"
+      <el-form-item label="审核状态" prop="auditStatus">
+        <el-select
+          v-model="queryParams.auditStatus"
+          placeholder="字典状态"
           clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="英文名称" prop="englishName">
-        <el-input
-          v-model="queryParams.englishName"
-          placeholder="请输入英文名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="商品数量" prop="productCount">
-        <el-input
-          v-model="queryParams.productCount"
-          placeholder="请输入商品数量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="更吓人ID" prop="updateById">
-        <el-input
-          v-model="queryParams.updateById"
-          placeholder="请输入更吓人ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建人ID" prop="createById">
-        <el-input
-          v-model="queryParams.createById"
-          placeholder="请输入创建人ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.product_brand_audit_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="parseInt(dict.value)"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -113,15 +97,24 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="" align="center" prop="id" />
       <el-table-column label="品牌名称" align="center" prop="name" />
-      <el-table-column label="图标" align="center" prop="logo" />
-      <el-table-column label="排序" align="center" prop="ordernum" />
       <el-table-column label="英文名称" align="center" prop="englishName" />
-      <el-table-column label="商品数量" align="center" prop="productCount" />
-      <el-table-column label="状态  0-上架 1-下架 3-删除 4-禁用" align="center" prop="status" />
+      <el-table-column label="图标" align="center" prop="logo" >
+        <template slot-scope="scope">
+          <image-preview :src="file(scope.row.logo)" :width="32" :height="32" />
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" align="center" prop="orderNum" />
+      <el-table-column label="状态" align="center"  prop="status" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.product_brand_status" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="审核状态" align="center" prop="auditStatus" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.product_brand_audit_status" :value="scope.row.auditStatus"/>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="更吓人ID" align="center" prop="updateById" />
-      <el-table-column label="创建人ID" align="center" prop="createById" />
-      <el-table-column label="审核状态  1-审核中  0-审核通过 2-审核失败" align="center" prop="auditStatus" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -153,52 +146,23 @@
     <!-- 添加或修改品牌对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="品牌名称" prop="name">
+        <el-form-item required label="品牌名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入品牌名称" />
-        </el-form-item>
-        <el-form-item label="图标" prop="logo">
-          <el-input v-model="form.logo" placeholder="请输入图标" />
-        </el-form-item>
-        <el-form-item label="排序" prop="ordernum">
-          <el-input v-model="form.ordernum" placeholder="请输入排序" />
         </el-form-item>
         <el-form-item label="英文名称" prop="englishName">
           <el-input v-model="form.englishName" placeholder="请输入英文名称" />
         </el-form-item>
-        <el-form-item label="商品数量" prop="productCount">
-          <el-input v-model="form.productCount" placeholder="请输入商品数量
-" />
+        <el-form-item required label="排序" prop="orderNum">
+          <el-input-number v-model="form.orderNum"  placeholder="请输入排序" />
+        </el-form-item>
+        <el-form-item required label="图标" prop="logo">
+          <file-upload ref="logo" :file-list="logofileList" :uploadFileUrl="logoAction"
+                       :fileType="['jpg','png','jpeg']"
+                       @input="handleUploadSuccess">
+          </file-upload>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker clearable
-            v-model="form.createTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择创建时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="更新时间" prop="updateTime">
-          <el-date-picker clearable
-            v-model="form.updateTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择更新时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="更新人" prop="updateBy">
-          <el-input v-model="form.updateBy" placeholder="请输入更新人" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="createBy">
-          <el-input v-model="form.createBy" placeholder="请输入创建人" />
-        </el-form-item>
-        <el-form-item label="更吓人ID" prop="updateById">
-          <el-input v-model="form.updateById" placeholder="请输入更吓人ID" />
-        </el-form-item>
-        <el-form-item label="创建人ID" prop="createById">
-          <el-input v-model="form.createById" placeholder="请输入创建人ID" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -214,6 +178,7 @@ import { listBrand, getBrand, delBrand, addBrand, updateBrand } from "@/api/prod
 
 export default {
   name: "Brand",
+  dicts: ['product_brand_status', 'product_brand_audit_status'],
   data() {
     return {
       // 遮罩层
@@ -230,6 +195,7 @@ export default {
       total: 0,
       // 品牌表格数据
       brandList: [],
+      logofileList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -239,19 +205,29 @@ export default {
         pageNum: 1,
         pageSize: 10,
         name: null,
-        logo: null,
-        ordernum: null,
-        englishName: null,
-        productCount: null,
         status: null,
-        updateById: null,
-        createById: null,
         auditStatus: null
       },
+      logoAction: process.env.VUE_APP_BASE_API + '/api/common/file/upload?module=商品品牌管理&function=品牌图标上传',
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        name: [{
+          required: true,
+          message: '请输入分类名称',
+          trigger: 'blur'
+        }],
+        orderNum: [{
+          required: true,
+          message: '排序必填',
+          trigger: 'blur'
+        }],
+        loge: [{
+          required: true,
+          message: '请上传品牌图标',
+          trigger: 'blur'
+        }],
       }
     };
   },
@@ -268,6 +244,9 @@ export default {
         this.loading = false;
       });
     },
+    file(url) {
+      return process.env.VUE_APP_BASE_API+"/api/common/file/"+url;
+    },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -279,7 +258,7 @@ export default {
         id: null,
         name: null,
         logo: null,
-        ordernum: null,
+        orderNum: null,
         englishName: null,
         productCount: null,
         status: "0",
@@ -361,7 +340,11 @@ export default {
       this.download('product/brand/export', {
         ...this.queryParams
       }, `brand_${new Date().getTime()}.xlsx`)
-    }
+    },
+    handleUploadSuccess(res) {
+      // 获取富文本组件实例
+      this.form.logo = res.url
+    },
   }
 };
 </script>
