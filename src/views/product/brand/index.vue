@@ -131,6 +131,20 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['product:brand:remove']"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleAudit(scope.row)"
+            v-hasPermi="['product:brand:audit']"
+          >审核</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleLink(scope.row)"
+            v-hasPermi="['product:brand:linkCategory']"
+          >关联分类</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -170,6 +184,29 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
+    <!-- 添加或修改品牌对话框 -->
+    <el-dialog :title="title" :visible.sync="link" width="900px" append-to-body>
+      <el-form ref="linkForm" :model="linkForm" :rules="rules" label-width="80px">
+        <el-form-item required label="品牌ID" prop="name">
+          <el-input v-model="linkForm.name" readonly />
+        </el-form-item>
+        <el-form-item label="品牌" prop="linkCategory">
+          <el-transfer
+            filterable
+            :titles="['商品分类','选中分类']"
+            filter-placeholder="请输入分类名称"
+            v-model="linkForm.linkCategory"
+            :data="categoryOptions">
+          </el-transfer>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancelLink">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -196,10 +233,16 @@ export default {
       // 品牌表格数据
       brandList: [],
       logofileList: [],
+      categoryOptions: [{
+        key:1,
+        label:"测试",
+        disable: false
+      }],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      link: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -211,6 +254,11 @@ export default {
       logoAction: process.env.VUE_APP_BASE_API + '/api/common/file/upload?module=商品品牌管理&function=品牌图标上传',
       // 表单参数
       form: {},
+      linkForm:{
+        id:null,
+        name:null,
+        linkCategory:[],
+      },
       // 表单校验
       rules: {
         name: [{
@@ -244,6 +292,14 @@ export default {
         this.loading = false;
       });
     },
+    handleLink(row) {
+      this.linkForm.id = row.id
+      this.linkForm.name = row.name
+      this.link = true;
+    },
+    handleAudit(row) {
+
+    },
     file(url) {
       return process.env.VUE_APP_BASE_API+"/api/common/file/"+url;
     },
@@ -252,7 +308,19 @@ export default {
       this.open = false;
       this.reset();
     },
+    cancelLink() {
+      this.link = false;
+      this.resetLink();
+    },
     // 表单重置
+    resetLink() {
+      this.linkForm = {
+        id: null,
+        name: null,
+        linkCategory:[]
+      };
+      this.resetForm("linkForm");
+    },
     reset() {
       this.form = {
         id: null,
@@ -300,7 +368,7 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getBrand(id).then(response => {
-        this.form = response.data;
+        this.form = response;
         this.open = true;
         this.title = "修改品牌";
       });
@@ -348,3 +416,10 @@ export default {
   }
 };
 </script>
+
+
+<style>
+  .el_scrollbar_wap {
+    height: 200px;
+  }
+</style>
