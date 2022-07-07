@@ -17,6 +17,14 @@ export function treeSelect(query) {
   })
 }
 
+export function selectOption(query) {
+  return request({
+    url: '/api/product/category/leaf/selectOption',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询商品分类详细
 export function getCategory(id) {
   return request({
@@ -27,7 +35,7 @@ export function getCategory(id) {
 
 export function getCategoryByCode(code) {
   return request({
-    url: '/api/product/category/3th/' + code,
+    url: '/api/product/category/leaf/' + code,
     method: 'get'
   })
 }

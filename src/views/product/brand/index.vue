@@ -212,6 +212,7 @@
 
 <script>
 import { listBrand, getBrand, delBrand, addBrand, updateBrand } from "@/api/product/brand";
+import { selectOption } from "@/api/product/category";
 
 export default {
   name: "Brand",
@@ -233,11 +234,7 @@ export default {
       // 品牌表格数据
       brandList: [],
       logofileList: [],
-      categoryOptions: [{
-        key:1,
-        label:"测试",
-        disable: false
-      }],
+      categoryOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -281,8 +278,19 @@ export default {
   },
   created() {
     this.getList();
+    this.getSelectOption();
   },
   methods: {
+    getSelectOption() {
+      selectOption().then(response => {
+        for (var index in response) {
+          response[index]["key"] = response[index].value
+        }
+
+        this.categoryOptions = response
+
+      })
+    },
     /** 查询品牌列表 */
     getList() {
       this.loading = true;
