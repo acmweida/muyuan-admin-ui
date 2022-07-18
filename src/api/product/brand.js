@@ -9,6 +9,14 @@ export function listBrand(query) {
   })
 }
 
+// 查询品牌分类列表
+export function listCategory(id) {
+  return request({
+    url: '/api/product/brand/category/'+id,
+    method: 'get',
+  })
+}
+
 // 查询品牌详细
 export function getBrand(id) {
   return request({
@@ -22,6 +30,15 @@ export function addBrand(data) {
   return request({
     url: '/api/product/brand',
     method: 'post',
+    data: data
+  })
+}
+
+// 新增品牌
+export function linkCategory(data) {
+  return request({
+    url: '/api/product/brand/category',
+    method: 'put',
     data: data
   })
 }
