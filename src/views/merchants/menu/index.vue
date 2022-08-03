@@ -268,7 +268,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" v-bind:disabled="submit">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -287,6 +287,7 @@ export default {
   components: { Treeselect, IconSelect },
   data() {
     return {
+      submit:false,
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -309,7 +310,9 @@ export default {
         visible: undefined
       },
       // 表单参数
-      form: {},
+      form: {
+        path:null
+      },
       // 表单校验
       rules: {
         name: [
@@ -400,6 +403,7 @@ export default {
         this.form.parentId = 0;
       }
       this.open = true;
+      this.submit = false
       this.title = "添加菜单";
     },
     /** 展开/折叠操作 */
@@ -424,16 +428,19 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.id != undefined) {
+          this.submit = true;
+          if (this.form.id !== undefined) {
             updateMenu(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.submit = false;
               this.getList();
             });
           } else {
             addMenu(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
+              this.submit = false;
               this.getList();
             });
           }

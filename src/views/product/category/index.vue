@@ -230,6 +230,9 @@
             }
 
             treeSelect(param).then(data => {
+              for (var index in data) {
+                data[index].value = data[index].id
+              }
               resolve(data);
             })
           }
