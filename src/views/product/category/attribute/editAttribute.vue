@@ -18,6 +18,9 @@
           <el-form-item required label-width="100px" label="属性名称" prop="name">
             <el-input v-model="item.name" style="width: 200px"/>
           </el-form-item>
+          <el-form-item required label-width="100px" label="属性编码" prop="code">
+            <el-input v-model="item.code" style="width: 200px"/>
+          </el-form-item>
           <el-form-item required label-width="100px" label="取值类型">
             <el-select v-model="item.inputType" placeholder="请选择">
               <el-option
@@ -78,6 +81,9 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="属性名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入属性名称"/>
+        </el-form-item>
+        <el-form-item label="属性编码" prop="code">
+          <el-input v-model="form.code" placeholder="请输入属性编码"/>
         </el-form-item>
         <el-form-item required label-width="80px" label="取值类型">
           <el-select v-model="form.inputType" placeholder="请选择">
@@ -149,13 +155,19 @@
           type: null,
           categoryCode: null,
           inputType: null,
-          typeArray: []
+          typeArray: [],
+          code:null
         },
         // 表单校验
         rules: {
           name: [{
             required: true,
             message: '请输入属性名称',
+            trigger: 'change'
+          }],
+          code: [{
+            required: true,
+            message: '请输入属性编码',
             trigger: 'change'
           }],
           inputType: [{
