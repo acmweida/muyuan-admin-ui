@@ -16,13 +16,13 @@
       <div>
         <el-form :ref="index" :model="item" :rules="rules" v-for="(item,index) in attributeList" class="layout" :key="index">
           <el-form-item required label-width="100px" label="属性名称" prop="name">
-            <el-input v-model="item.name" style="width: 200px"/>
+            <el-input v-model="item.name" style="width: 150px"/>
           </el-form-item>
           <el-form-item required label-width="100px" label="属性编码" prop="code">
-            <el-input v-model="item.code" style="width: 200px"/>
+            <el-input v-model="item.code" style="width: 150px"/>
           </el-form-item>
           <el-form-item required label-width="100px" label="取值类型">
-            <el-select v-model="item.inputType" placeholder="请选择">
+            <el-select v-model="item.inputType" placeholder="请选择" style="width: 100px">
               <el-option
                 v-for="item in dict.type.product_category_attribute_input_type"
                 :key="item.value"
@@ -78,7 +78,7 @@
 
     <!-- 添加或修改商品分类属性对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="60px">
         <el-form-item label="属性名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入属性名称"/>
         </el-form-item>
@@ -325,7 +325,7 @@
   .attribute {
     display: grid;
     width: 100%;
-    grid-template-columns: 75% auto;
+    grid-template-columns: 80% auto;
   }
 
   .layout {
