@@ -14,7 +14,7 @@ export function login(username, password, captcha, uuid) {
     user_type: process.env.VUE_APP_USER_TYPE
   }
   return request({
-    url: '/api/auth/oauth/token',
+    url: '/auth/oauth/token',
     method: 'post',
     data: data,
     headers: {
@@ -36,7 +36,7 @@ export function login(username, password, captcha, uuid) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/api/system/getUserInfo',
+    url: '/manager-system/getUserInfo',
     method: 'get'
   })
 }
@@ -44,7 +44,7 @@ export function getInfo() {
 // 退出方法
 export function logout() {
   return request({
-    url: '/api/auth/login/logout',
+    url: '/auth/login/logout',
     method: 'get'
   })
 }
@@ -52,7 +52,7 @@ export function logout() {
 // 获取验证码
 export function getCodeImg() {
   return request({
-    url: '/api/auth/login/captchaImage',
+    url: '/auth/login/captchaImage',
     method: 'get'
   })
 }

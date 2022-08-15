@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询字典类型列表
 export function listType(query) {
   return request({
-    url: '/api/system/dictType/list',
+    url: '/manager-system/dictType/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listType(query) {
 // 查询字典类型详细
 export function getType(id) {
   return request({
-    url: '/api/system/dictType/' + id,
+    url: '/manager-system/dictType/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getType(id) {
 // 新增字典类型
 export function addType(data) {
   return request({
-    url: '/api/system/dictType',
+    url: '/manager-system/dictType',
     method: 'post',
     data: data
   })
@@ -54,7 +54,7 @@ export function refreshCache() {
 // 获取字典选择框列表
 export function optionselect() {
   return request({
-    url: '/api/system/dictType/optionselect',
+    url: '/manager-system/dictType/optionselect',
     method: 'get'
   })
 }
