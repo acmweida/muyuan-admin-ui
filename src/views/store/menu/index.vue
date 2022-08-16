@@ -276,7 +276,7 @@
 </template>
 
 <script>
-import { listMenu, getMenu, delMenu, addMenu, updateMenu } from "@/api/merchants/menu";
+import { listMenu, getMenu, delMenu, addMenu, updateMenu,getToken } from "@/api/store/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import IconSelect from "@/components/IconSelect";
@@ -311,7 +311,8 @@ export default {
       },
       // 表单参数
       form: {
-        path:null
+        path:null,
+        token:''
       },
       // 表单校验
       rules: {
@@ -380,7 +381,8 @@ export default {
         frame: "1",
         cache: "0",
         visible: "0",
-        status: "0"
+        status: "0",
+        token:'',
       };
       this.resetForm("form");
     },
@@ -405,6 +407,10 @@ export default {
       this.open = true;
       this.submit = false
       this.title = "添加菜单";
+      getToken().then(res => {
+        console.log(res)
+        this.form.token = res.token
+      })
     },
     /** 展开/折叠操作 */
     toggleExpandAll() {
@@ -442,6 +448,8 @@ export default {
               this.open = false;
               this.submit = false;
               this.getList();
+            },() => {
+              this.open = false
             });
           }
         }

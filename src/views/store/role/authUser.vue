@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/merchants/role";
+import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/store/role";
 import selectUser from "./selectUser";
 
 export default {

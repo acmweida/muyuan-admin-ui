@@ -245,9 +245,9 @@
 </template>
 
 <script>
-import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from "@/api/merchants/role";
-import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/merchants/menu";
-import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/merchants/dept";
+import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from "@/api/store/role";
+import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/store/menu";
+import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/store/dept";
 
 export default {
   name: "Role",
@@ -545,7 +545,7 @@ export default {
     /** 分配用户操作 */
     handleAuthUser: function(row) {
       const roleId = row.id;
-      this.$router.push("/merchants/role-auth/user/" + roleId);
+      this.$router.push("/store/role-auth/user/" + roleId);
     },
     /** 提交按钮 */
     submitForm: function() {

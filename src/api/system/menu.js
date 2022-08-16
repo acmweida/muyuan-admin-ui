@@ -28,7 +28,7 @@ export function treeselect() {
 // 根据角色ID查询菜单下拉树结构
 export function roleMenuTreeselect(roleId) {
   return request({
-    url: '/manager-system/menu/roleNemuTreeselect/' + roleId,
+    url: '/manager-system/menu/roleMemuTreeselect/' + roleId,
     method: 'get'
   })
 }
@@ -45,7 +45,7 @@ export function addMenu(data) {
 // 修改菜单
 export function updateMenu(data) {
   return request({
-    url: '/system/menu',
+    url: '/manager-system/menu',
     method: 'put',
     data: data
   })

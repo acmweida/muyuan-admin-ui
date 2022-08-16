@@ -354,7 +354,6 @@ export default {
     /** 查询菜单下拉树结构 */
     getTreeselect() {
       listMenu().then(data => {
-        debugger
         this.menuOptions = [];
         const menu = { id: 0, name: '主类目', children: [] };
         menu.children = this.handleTree(data, "id");
@@ -436,7 +435,7 @@ export default {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
-            });
+            })
           }
         }
       });
