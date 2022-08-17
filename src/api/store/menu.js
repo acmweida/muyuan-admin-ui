@@ -42,9 +42,9 @@ export function getToken() {
 }
 
 // 新增菜单
-export function addMenu(data) {
+export function addMenu(data,token) {
   return request({
-    url: '/store-system/menu',
+    url: '/store-system/menu?token='+token,
     method: 'post',
     data: data
   })

@@ -309,10 +309,10 @@ export default {
         menuName: undefined,
         visible: undefined
       },
+      token:'',
       // 表单参数
       form: {
-        path:null,
-        token:''
+        path:null
       },
       // 表单校验
       rules: {
@@ -409,7 +409,7 @@ export default {
       this.title = "添加菜单";
       getToken().then(res => {
         console.log(res)
-        this.form.token = res.token
+        this.token = res.token
       })
     },
     /** 展开/折叠操作 */
@@ -443,7 +443,7 @@ export default {
               this.getList();
             });
           } else {
-            addMenu(this.form).then(response => {
+            addMenu(this.form,this.token).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.submit = false;
