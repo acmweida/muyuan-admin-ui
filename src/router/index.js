@@ -149,6 +149,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/product/feature-value',
+    component: Layout,
+    hidden: true,
+    permissions: ['product:feature:list'],
+    children: [
+      {
+        path: 'index/:featureId(\\d+)',
+        component: () => import('@/views/product/feature/value'),
+        name: 'Data',
+        meta: { title: '特征值', activeMenu: '/system/dict' }
+      }
+    ]
+  },
+  {
     path: '/monitor/job-log',
     component: Layout,
     hidden: true,

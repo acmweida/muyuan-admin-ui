@@ -9,6 +9,16 @@ export function listFeature(query) {
   })
 }
 
+export function selectOptions(query) {
+  return request({
+    url: '/manager-product/feature/options',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
 // 查询通用特征量详细
 export function getFeature(id) {
   return request({

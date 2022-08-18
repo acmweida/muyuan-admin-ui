@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="属性名称" prop="name">
+      <el-form-item label="属性ID" prop="attributeId">
         <el-input
-          v-model="queryParams.name"
-          placeholder="请输入属性名称"
+          v-model="queryParams.attributeId"
+          placeholder="请输入属性ID"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="父属性ID" prop="parentId">
+      <el-form-item label="属性值" prop="value">
         <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入父属性ID"
+          v-model="queryParams.value"
+          placeholder="请输入属性值"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -31,7 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['product:feature:add']"
+          v-hasPermi="['product:value:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -42,7 +42,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['product:feature:edit']"
+          v-hasPermi="['product:value:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -53,7 +53,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['product:feature:remove']"
+          v-hasPermi="['product:value:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -63,23 +63,17 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['product:feature:export']"
+          v-hasPermi="['product:value:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="featureList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="valueList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="属性名称" align="center" prop="name" >
-        <template slot-scope="scope">
-          <router-link :to="'/product/feature-value/index/' + scope.row.id" class="link-type">
-            <span>{{ scope.row.name }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column label="属性编码" align="center" prop="code" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="属性ID" align="center" prop="attributeId" />
+      <el-table-column label="属性值" align="center" prop="value" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -87,14 +81,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['product:feature:edit']"
+            v-hasPermi="['product:value:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['product:feature:remove']"
+            v-hasPermi="['product:value:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -108,32 +102,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改通用特征量对话框 -->
+    <!-- 添加或修改通用特征值对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="属性名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入属性名称" />
+        <el-form-item label="属性ID" prop="attributeId">
+          <el-input v-model="form.attributeId" placeholder="请输入属性ID" />
         </el-form-item>
-        <el-form-item label="子特征量" prop="childId">
-          <el-select
-            v-model="selectChild"
-            multiple
-            filterable
-            remote
-            reserve-keyword
-            placeholder="请输入特征量名称"
-            :remote-method="remoteMethod"
-            :loading="loading">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="属性编码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入属性编码" />
+        <el-form-item label="属性值" prop="value">
+          <el-input v-model="form.value" placeholder="请输入属性值" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -145,14 +121,12 @@
 </template>
 
 <script>
-import { listFeature, getFeature, delFeature, addFeature, updateFeature,selectOptions } from "@/api/product/feature";
+import { listValue, getValue, delValue, addValue, updateValue } from "@/api/product/feature";
 
 export default {
-  name: "Feature",
+  name: "Value",
   data() {
     return {
-      selectChild:[],
-      options:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -165,8 +139,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 通用特征量表格数据
-      featureList: [],
+      // 通用特征值表格数据
+      valueList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -175,17 +149,11 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        name: null,
-        htmlType: null,
-        parentId: null,
-        status: null,
-        creator: null,
-        code: null
+        attributeId: null,
+        value: null
       },
       // 表单参数
-      form: {
-        childId:null
-      },
+      form: {},
       // 表单校验
       rules: {
       }
@@ -195,28 +163,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询通用特征量列表 */
-    remoteMethod(query) {
-      if (query !== '') {
-        this.loading = true;
-        selectOptions({name:query}).then(res => {
-          var options = [];
-          for (var index in res) {
-            options.push({
-              value: res[index].id,
-              label: res[index].label
-            })
-          }
-          this.options = options;
-        })
-      } else {
-        this.options = [];
-      }
-    },
+    /** 查询通用特征值列表 */
     getList() {
       this.loading = true;
-      listFeature(this.queryParams).then(response => {
-        this.featureList = response.rows;
+      listValue(this.queryParams).then(response => {
+        this.valueList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -230,13 +181,8 @@ export default {
     reset() {
       this.form = {
         id: null,
-        name: null,
-        htmlType: null,
-        parentId: null,
-        status: 0,
-        createTime: null,
-        creator: null,
-        code: null
+        attributeId: null,
+        value: null
       };
       this.resetForm("form");
     },
@@ -260,16 +206,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加通用特征量";
+      this.title = "添加通用特征值";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getFeature(id).then(response => {
+      getValue(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改通用特征量";
+        this.title = "修改通用特征值";
       });
     },
     /** 提交按钮 */
@@ -277,13 +223,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateFeature(this.form).then(response => {
+            updateValue(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addFeature(this.form).then(response => {
+            addValue(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -292,12 +238,11 @@ export default {
         }
       });
     },
-
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除通用特征量编号为"' + ids + '"的数据项？').then(function() {
-        return delFeature(ids);
+      this.$modal.confirm('是否确认删除通用特征值编号为"' + ids + '"的数据项？').then(function() {
+        return delValue(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -305,9 +250,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('product/feature/export', {
+      this.download('product/value/export', {
         ...this.queryParams
-      }, `feature_${new Date().getTime()}.xlsx`)
+      }, `value_${new Date().getTime()}.xlsx`)
     }
   }
 };

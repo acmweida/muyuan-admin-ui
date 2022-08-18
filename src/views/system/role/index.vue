@@ -246,7 +246,7 @@
 
 <script>
 import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from "@/api/system/role";
-import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
+import { treeselect as menuTreeselect, roleMenuTreeSelect } from "@/api/system/menu";
 import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/system/dept";
 
 export default {
@@ -377,8 +377,8 @@ export default {
       return checkedKeys;
     },
     /** 根据角色ID查询菜单树结构 */
-    getRoleMenuTreeselect(roleId) {
-      return roleMenuTreeselect(roleId).then(data => {
+    getRoleMenuTreeSelect(roleId) {
+      return roleMenuTreeSelect(roleId).then(data => {
         this.menuOptions = data.selectTree;
         return data;
       });
@@ -504,7 +504,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const roleId = row.id || this.ids
-      const roleMenu = this.getRoleMenuTreeselect(roleId);
+      const roleMenu = this.getRoleMenuTreeSelect(roleId);
       getRole(roleId).then(data => {
         this.form = data;
         this.open = true;

@@ -276,7 +276,7 @@
 </template>
 
 <script>
-import { listMenu, getMenu, delMenu, addMenu, updateMenu } from "@/api/system/menu";
+import { listMenu, getMenu, delMenu, addMenu, updateMenu,getToken } from "@/api/system/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import IconSelect from "@/components/IconSelect";
@@ -308,6 +308,7 @@ export default {
         menuName: undefined,
         visible: undefined
       },
+      token:"",
       // 表单参数
       form: {},
       // 表单校验
@@ -352,7 +353,7 @@ export default {
       };
     },
     /** 查询菜单下拉树结构 */
-    getTreeselect() {
+    getTreeSelect() {
       listMenu().then(data => {
         this.menuOptions = [];
         const menu = { id: 0, name: '主类目', children: [] };
@@ -393,7 +394,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.reset();
-      this.getTreeselect();
+      this.getTreeSelect();
       if (row != null && row.id) {
         this.form.parentId = row.id;
       } else {
@@ -401,6 +402,10 @@ export default {
       }
       this.open = true;
       this.title = "添加菜单";
+      getToken().then(res => {
+        console.log(res)
+        this.token = res.token
+      })
     },
     /** 展开/折叠操作 */
     toggleExpandAll() {
@@ -413,7 +418,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      this.getTreeselect();
+      this.getTreeSelect();
       getMenu(row.id).then(data => {
         this.form = data;
         this.open = true;
@@ -431,10 +436,12 @@ export default {
               this.getList();
             });
           } else {
-            addMenu(this.form).then(response => {
+            addMenu(this.form,this.token).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            },() => {
+              this.open = false;
             })
           }
         }

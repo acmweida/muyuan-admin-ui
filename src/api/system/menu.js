@@ -18,27 +18,35 @@ export function getMenu(menuId) {
 }
 
 // 查询菜单下拉树结构
-export function treeselect() {
+export function treeSelect() {
   return request({
-    url: '/manager-system/menu/treeselect',
+    url: '/manager-system/menu/treeSelect',
     method: 'get'
   })
 }
 
 // 根据角色ID查询菜单下拉树结构
-export function roleMenuTreeselect(roleId) {
+export function roleMenuTreeSelect(roleId) {
   return request({
-    url: '/manager-system/menu/roleMenuTreeselect/' + roleId,
+    url: '/manager-system/menu/roleMenuTreeSelect/' + roleId,
     method: 'get'
   })
 }
 
 // 新增菜单
-export function addMenu(data) {
+export function addMenu(data,token) {
   return request({
-    url: '/manager-system/menu',
+    url: '/manager-system/menu?token='+token,
     method: 'post',
     data: data
+  })
+}
+
+// 新增菜单
+export function getToken() {
+  return request({
+    url: '/manager-system/menu/token',
+    method: 'get'
   })
 }
 
