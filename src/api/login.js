@@ -11,7 +11,7 @@ export function login(username, password, captcha, uuid) {
     client_secret: process.env.VUE_APP_CLIENT_SECRET,
     scope: process.env.VUE_APP_CLIENT_SCOPE,
     grant_type: process.env.VUE_APP_CLIENT_IMAGE_CAPTCHA,
-    user_type: process.env.VUE_APP_USER_TYPE
+    platform_type: process.env.VUE_APP_PLATFORM_TYPE
   }
   return request({
     url: '/auth/oauth/token',
@@ -36,7 +36,7 @@ export function login(username, password, captcha, uuid) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/manager-system/getUserInfo',
+    url: '/user/user/get',
     method: 'get'
   })
 }
@@ -52,7 +52,7 @@ export function logout() {
 // 获取验证码
 export function getCodeImg() {
   return request({
-    url: '/auth/login/captchaImage',
+    url: '/auth/captchaImage',
     method: 'get'
   })
 }
