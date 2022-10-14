@@ -306,7 +306,8 @@ export default {
       // 查询参数
       queryParams: {
         menuName: undefined,
-        visible: undefined
+        visible: undefined,
+        platformType:1
       },
       token:"",
       // 表单参数
