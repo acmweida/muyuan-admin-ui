@@ -1,14 +1,24 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
-      <el-form-item label="菜单名称" prop="menuName">
+      <el-form-item label="菜单名称" prop="name">
         <el-input
-          v-model="queryParams.menuName"
+          v-model="queryParams.name"
           placeholder="请输入菜单名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="状态" prop="platformType">
+        <el-select v-model="queryParams.platformType" placeholder="平台" size="small">
+          <el-option
+            v-for="dict in platformTypeOptions"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="菜单状态" clearable size="small">
@@ -305,10 +315,24 @@ export default {
       refreshTable: true,
       // 查询参数
       queryParams: {
-        menuName: undefined,
+        name: undefined,
         visible: undefined,
-        platformType:1
+        platformType:0
       },
+      platformTypeOptions: [
+        {
+          label: '运营系统',
+          value: 0
+        },
+        {
+          label: '商家系统',
+          value: 1
+        },
+        {
+          label: '商城系统',
+          value: 2
+        }
+      ],
       token:"",
       // 表单参数
       form: {},
