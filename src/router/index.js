@@ -138,7 +138,7 @@ export const dynamicRoutes = [
     path: '/system/dict-data',
     component: Layout,
     hidden: true,
-    permissions: ['system:dict:list'],
+    permissions: ['system:dict:query'],
     children: [
       {
         path: 'index/:dictId(\\d+)',
