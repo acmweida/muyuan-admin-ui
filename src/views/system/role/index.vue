@@ -21,6 +21,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="平台类型" prop="platformType">
+        <el-select
+          v-model="queryParams.platformType"
+          placeholder="平台类型"
+          clearable
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.platform_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
@@ -251,7 +267,7 @@ import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/system/d
 
 export default {
   name: "Role",
-  dicts: ['sys_normal_disable'],
+  dicts: ['sys_normal_disable','platform_type'],
   data() {
     return {
       // 遮罩层
@@ -313,7 +329,8 @@ export default {
         pageSize: 10,
         name: undefined,
         code: undefined,
-        status: undefined
+        status: undefined,
+        platformType:undefined
       },
       // 表单参数
       form: {},

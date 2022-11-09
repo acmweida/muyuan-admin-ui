@@ -10,10 +10,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="platformType">
+      <el-form-item label="平台类型" prop="platformType">
         <el-select v-model="queryParams.platformType" placeholder="平台" size="small">
           <el-option
-            v-for="dict in platformTypeOptions"
+            v-for="dict in dict.type.platform_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -74,7 +74,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="orderNum" label="排序" width="60"></el-table-column>
-      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>
+<!--      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>-->
       <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="status" label="状态" width="80">
         <template slot-scope="scope">
@@ -133,7 +133,7 @@
               <el-radio-group v-model="form.type">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
-                <el-radio label="F">按钮</el-radio>
+<!--                <el-radio label="F">按钮</el-radio>-->
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -205,17 +205,17 @@
               <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.type != 'M'">
-            <el-form-item>
-              <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
-              <span slot="label">
-                <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
-                <i class="el-icon-question"></i>
-                </el-tooltip>
-                权限字符
-              </span>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="12" v-if="form.type != 'M'">-->
+<!--            <el-form-item>-->
+<!--              <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />-->
+<!--              <span slot="label">-->
+<!--                <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">-->
+<!--                <i class="el-icon-question"></i>-->
+<!--                </el-tooltip>-->
+<!--                权限字符-->
+<!--              </span>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
           <el-col :span="12" v-if="form.type == 'C'">
             <el-form-item>
               <el-input v-model="form.query" placeholder="请输入路由参数" maxlength="255" />
@@ -293,7 +293,7 @@ import IconSelect from "@/components/IconSelect";
 
 export default {
   name: "Menu",
-  dicts: ['sys_show_hide', 'sys_normal_disable'],
+  dicts: ['sys_show_hide', 'sys_normal_disable','platform_type'],
   components: { Treeselect, IconSelect },
   data() {
     return {
@@ -317,22 +317,8 @@ export default {
       queryParams: {
         name: undefined,
         visible: undefined,
-        platformType:0
+        platformType:"0"
       },
-      platformTypeOptions: [
-        {
-          label: '运营系统',
-          value: 0
-        },
-        {
-          label: '商家系统',
-          value: 1
-        },
-        {
-          label: '商城系统',
-          value: 2
-        }
-      ],
       token:"",
       // 表单参数
       form: {},

@@ -29,7 +29,7 @@ export function addType(data) {
 // 修改字典类型
 export function updateType(data) {
   return request({
-    url: '/system/dict/type',
+    url: '/manager-system/dictType',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateType(data) {
 // 删除字典类型
 export function delType(dictId) {
   return request({
-    url: '/system/dict/type/' + dictId,
+    url: '/manager-system/dictType/' + dictId,
     method: 'delete'
   })
 }

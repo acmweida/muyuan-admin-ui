@@ -18,7 +18,7 @@ export function getMenu(menuId) {
 }
 
 // 查询菜单下拉树结构
-export function treeSelect() {
+export function treeselect() {
   return request({
     url: '/manager-system/menu/treeSelect',
     method: 'get'
