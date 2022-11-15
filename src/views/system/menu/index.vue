@@ -118,6 +118,18 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24">
+            <el-form-item label="平台类型">
+              <el-select v-model="form.platformType" placeholder="平台" size="small"  @change="getTreeSelect">
+                <el-option
+                  v-for="dict in dict.type.platform_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
             <el-form-item label="上级菜单">
               <treeselect
                 v-model="form.parentId"
@@ -321,7 +333,9 @@ export default {
       },
       token:"",
       // 表单参数
-      form: {},
+      form: {
+        platformType:"0"
+      },
       // 表单校验
       rules: {
         name: [
@@ -365,7 +379,9 @@ export default {
     },
     /** 查询菜单下拉树结构 */
     getTreeSelect() {
-      listMenu().then(data => {
+      console.log(this.form)
+      this.form.parentId = null;
+      listMenu({platformType: this.form.platformType}).then(data => {
         this.menuOptions = [];
         const menu = { id: 0, name: '主类目', children: [] };
         menu.children = this.handleTree(data, "id");
@@ -389,7 +405,8 @@ export default {
         frame: "1",
         cache: "0",
         visible: "0",
-        status: "0"
+        status: "0",
+        platformType: "0"
       };
       this.resetForm("form");
     },
