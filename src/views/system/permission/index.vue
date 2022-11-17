@@ -69,7 +69,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['user:permission:add']"
+          v-hasPermi="['system:perms:add']"
         >新增
         </el-button>
       </el-col>
@@ -81,7 +81,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['user:permission:edit']"
+          v-hasPermi="['system:perms:edit']"
         >修改
         </el-button>
       </el-col>
@@ -93,7 +93,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['user:permission:remove']"
+          v-hasPermi="['system:perms:remove']"
         >删除
         </el-button>
       </el-col>
@@ -104,7 +104,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['user:permission:export']"
+          v-hasPermi="['system:system:export']"
         >导出
         </el-button>
       </el-col>
@@ -113,6 +113,11 @@
 
     <el-table v-loading="loading" :data="permissionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="平台类型" align="center" prop="platformType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.platform_type" :value="scope.row.platformType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="分组" align="center" prop="business"/>
       <el-table-column label="模块" align="center" prop="module"/>
       <el-table-column label="权限名称" align="center" prop="resource"/>
@@ -127,11 +132,6 @@
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="平台类型" align="center" prop="platformType">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.platform_type" :value="scope.row.platformType"/>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -139,7 +139,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['user:permission:edit']"
+            v-hasPermi="['system:perms:edit']"
           >修改
           </el-button>
           <el-button
@@ -147,7 +147,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['user:permission:remove']"
+            v-hasPermi="['system:perms:remove']"
           >删除
           </el-button>
         </template>
@@ -163,15 +163,19 @@
     />
 
     <!-- 添加或修改权限信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="运营平台" prop="platformType">
-          <el-select v-model="form.platformType" placeholder="请选择运营平台" clearable :style="{width: '100%'}">
-            <el-option v-for="(item, index) in platformTypeOptions" :key="index" :label="item.label"
-                       :value="item.value" :disabled="item.disabled"></el-option>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body @close="open = false ">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="平台类型" prop="platformType">
+          <el-select v-model="form.platformType" placeholder="平台" size="small">
+            <el-option
+              v-for="dict in dict.type.platform_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="分组" prop="group">
+        <el-form-item label="分组" prop="business">
           <el-input v-model="form.business" placeholder="请输入分组" clearable :style="{width: '100%'}"></el-input>
         </el-form-item>
         <el-form-item label="模块" prop="module">
@@ -181,19 +185,23 @@
           <el-input v-model="form.resource" placeholder="请输入权限名称" clearable :style="{width: '100%'}">
           </el-input>
         </el-form-item>
-        <el-form-item label="权限类型" prop="action">
-          <el-select v-model="form.type" placeholder="请选择权限类型" clearable :style="{width: '100%'}">
-            <el-option v-for="(item, index) in actionOptions" :key="index" :label="item.label"
-                       :value="item.value" :disabled="item.disabled"></el-option>
+        <el-form-item label="权限类型" prop="type">
+          <el-select v-model="form.type" size="small">
+            <el-option
+              v-for="dict in dict.type.permission_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="权限表达式" prop="parms">
-          <el-input v-model="form.parms" placeholder="请输入权限表达式" clearable :style="{width: '100%'}">
+        <el-form-item label="权限表达式" prop="perms">
+          <el-input v-model="form.perms" placeholder="请输入权限表达式" clearable :style="{width: '100%'}">
           </el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status" size="medium">
-            <el-radio v-for="(item, index) in statusOptions" :key="index" :label="item.value"
+            <el-radio v-for="(item, index) in dict.type.sys_normal_disable" :key="index" :label="item.value"
                       :disabled="item.disabled">{{item.label}}
             </el-radio>
           </el-radio-group>
@@ -246,7 +254,10 @@
           platformType: "0"
         },
         // 表单参数
-        form: {},
+        form: {
+          platformType:"0",
+          status: "0"
+        },
         // 表单校验
         rules: {
           platformType: [{
@@ -274,7 +285,7 @@
             message: '请选择权限类型',
             trigger: 'change'
           }],
-          parms: [{
+          perms: [{
             required: true,
             message: '请输入权限表达式',
             trigger: 'blur'
@@ -314,8 +325,8 @@
           resource: null,
           type: null,
           perms: null,
-          status: 0,
-          platformType: null
+          status: "0",
+          platformType: "0"
         };
         this.resetForm("form");
       },
@@ -346,7 +357,7 @@
         this.reset();
         const id = row.id || this.ids
         getPermission(id).then(response => {
-          this.form = response.data;
+          this.form = response;
           this.open = true;
           this.title = "修改权限信息";
         });
