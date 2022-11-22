@@ -330,7 +330,7 @@ export default {
         name: undefined,
         code: undefined,
         status: undefined,
-        platformType:undefined
+        platformType:"0"
       },
       // 表单参数
       form: {},

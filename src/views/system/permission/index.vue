@@ -206,6 +206,25 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item v-show="form.type === 'M' || form.type === 'C' " label="关联菜单" prop="resourceRef">
+          <el-input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText">
+          </el-input>
+          <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
+          <el-tree
+            class="tree-border"
+            :data="menuOptions"
+            show-checkbox
+            ref="menu"
+            node-key="id"
+            empty-text="加载中，请稍候"
+            :check-strictly="true"
+            :props="defaultProps"
+            @check-change="handleCheckChange"
+            :filter-node-method="filterNode"
+          ></el-tree>
+        </el-form-item>
         <el-form-item size="large">
           <el-button type="primary" @click="submitForm">提交</el-button>
           <el-button @click="resetForm">重置</el-button>
@@ -217,12 +236,28 @@
 
 <script>
   import {listPermission, getPermission, delPermission, addPermission, updatePermission} from "@/api/system/permission";
+  import { treeselect as menuTreeselect, roleMenuTreeSelect } from "@/api/system/menu";
 
   export default {
     name: "Permission",
     dicts: ['sys_normal_disable', 'platform_type', "permission_type"],
     data() {
+      const checkResourceRef = (role,value,callback) => {
+          if ((this.form.type === "M" || this.form.type === "C")  &&
+            (this.form.resourceRef === null  || this.form.resourceRef === "" )) {
+              callback(new Error("必须选择关联菜单或目录！"))
+          } else {
+            callback();
+          }
+      }
+
+
       return {
+        filterText: '',
+        defaultProps: {
+          children: "children",
+          label: "label"
+        },
         // 遮罩层
         loading: true,
         // 选中数组
@@ -237,6 +272,8 @@
         total: 0,
         // 权限信息表格数据
         permissionList: [],
+        // 菜单列表
+        menuOptions: [],
         // 弹出层标题
         title: "",
         // 是否显示弹出层
@@ -251,12 +288,20 @@
           type: null,
           perms: null,
           status: null,
-          platformType: "0"
+          platformType: "0",
+          resourceRef: null,
         },
+        // 是否显示弹出层（数据权限）
+        openDataScope: false,
+        menuExpand: false,
+        menuNodeAll: false,
+        deptExpand: true,
+        deptNodeAll: false,
         // 表单参数
         form: {
           platformType:"0",
-          status: "0"
+          status: "0",
+          resourceRef:null
         },
         // 表单校验
         rules: {
@@ -294,14 +339,26 @@
             required: true,
             message: '状态不能为空',
             trigger: 'change'
+          }],
+          resourceRef:[{
+            validator : checkResourceRef,trigger:"change"
           }]
         }
       };
+    },
+    watch: {
+      filterText(val) {
+        this.$refs.menu.filter(val);
+      }
     },
     created() {
       this.getList();
     },
     methods: {
+      filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
       /** 查询权限信息列表 */
       getList() {
         this.loading = true;
@@ -309,6 +366,12 @@
           this.permissionList = response.rows;
           this.total = response.total;
           this.loading = false;
+        });
+      },
+      /** 查询菜单树结构 */
+      getMenuTreeselect() {
+        menuTreeselect().then(data => {
+          this.menuOptions = data;
         });
       },
       // 取消按钮
@@ -340,6 +403,27 @@
         this.resetForm("queryForm");
         this.handleQuery();
       },
+      // 菜单选择事件
+      handleCheckChange(data,chained,indeterminate) {
+        if (chained) {
+          let value = [data.id];
+          this.$refs.menu.setCheckedKeys(value);
+        }
+      },
+      // 树权限（展开/折叠）
+      handleCheckedTreeExpand(value, type) {
+        if (type == 'menu') {
+          let treeList = this.menuOptions;
+          for (let i = 0; i < treeList.length; i++) {
+            this.$refs.menu.store.nodesMap[treeList[i].id].expanded = value;
+          }
+        } else if (type == 'dept') {
+          let treeList = this.deptOptions;
+          for (let i = 0; i < treeList.length; i++) {
+            this.$refs.dept.store.nodesMap[treeList[i].id].expanded = value;
+          }
+        }
+      },
       // 多选框选中数据
       handleSelectionChange(selection) {
         this.ids = selection.map(item => item.id)
@@ -349,21 +433,35 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
+        this.getMenuTreeselect();
         this.open = true;
         this.title = "添加权限信息";
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
         this.reset();
+        this.getMenuTreeselect();
         const id = row.id || this.ids
         getPermission(id).then(response => {
           this.form = response;
           this.open = true;
           this.title = "修改权限信息";
+          this.$refs.menu.setChecked(parseInt(response.resourceRef), true ,false);
         });
+      },
+      // 所有菜单节点数据
+      getMenuAllCheckedKeys() {
+        // 目前被选中的菜单节点
+        let checkedKeys = this.$refs.menu.getCheckedKeys();
+        // 半选中的菜单节点
+        let halfCheckedKeys = this.$refs.menu.getHalfCheckedKeys();
+        checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
+        return checkedKeys;
       },
       /** 提交按钮 */
       submitForm() {
+        var menuId = this.getMenuAllCheckedKeys();
+        this.form.resourceRef = menuId.length === 0 ? null : menuId[0];
         this.$refs["form"].validate(valid => {
           if (valid) {
             if (this.form.id != null) {
