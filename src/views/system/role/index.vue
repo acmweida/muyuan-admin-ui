@@ -119,6 +119,11 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="平台类型" align="center" prop="platformType" width="120">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.platform_type" :value="scope.row.platformType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="角色编码" prop="code" width="120" />
       <el-table-column label="角色名称" prop="name" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="显示顺序" prop="orderNum" width="100" />
@@ -179,6 +184,16 @@
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="平台类型" prop="platformType">
+          <el-select v-model="form.platformType+''" placeholder="平台" size="small">
+            <el-option
+              v-for="dict in dict.type.platform_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入角色名称" />
         </el-form-item>
@@ -365,7 +380,7 @@ export default {
     },
     /** 查询菜单树结构 */
     getMenuTreeselect() {
-      menuTreeselect().then(data => {
+      menuTreeselect(this.form.platformType).then(data => {
         this.menuOptions = data;
       });
     },
@@ -394,8 +409,8 @@ export default {
       return checkedKeys;
     },
     /** 根据角色ID查询菜单树结构 */
-    getRoleMenuTreeSelect(roleId) {
-      return roleMenuTreeSelect(roleId).then(data => {
+    getRoleMenuTreeSelect(row) {
+      return roleMenuTreeSelect(row.platformType,row.id).then(data => {
         this.menuOptions = data.selectTree;
         return data;
       });
@@ -446,7 +461,8 @@ export default {
         menuIds: [],
         deptIds: [],
         menuCheckStrictly: true,
-        deptCheckStrictly: true
+        deptCheckStrictly: true,
+        platformType:'0'
       };
       this.resetForm("form");
     },
@@ -521,7 +537,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const roleId = row.id || this.ids
-      const roleMenu = this.getRoleMenuTreeSelect(roleId);
+      const roleMenu = this.getRoleMenuTreeSelect(row);
       getRole(roleId).then(data => {
         this.form = data;
         this.open = true;
@@ -547,7 +563,7 @@ export default {
     /** 分配数据权限操作 */
     handleDataScope(row) {
       this.reset();
-      const roleDeptTreeselect = this.getRoleDeptTreeselect(row.roleId);
+      const roleDeptTreeselect = this.getRoleDeptTreeselect(row.id);
       getRole(row.roleId).then(response => {
         this.form = response.data;
         this.openDataScope = true;
