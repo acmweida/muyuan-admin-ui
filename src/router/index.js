@@ -121,6 +121,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/system/role-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:role:edit'],
+    children: [
+      {
+        path: 'permission/:roleId(\\d+)',
+        component: () => import('@/views/system/role/authPermission'),
+        name: 'AuthPermission',
+        meta: { title: '分配权限', activeMenu: '/system/role' }
+      }
+    ]
+  },
+  {
     path: '/product/goods-category',
     component: Layout,
     hidden: true,

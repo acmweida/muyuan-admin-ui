@@ -163,6 +163,8 @@
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="handleAuthPermission" icon="el-icon-circle-check"
+                                v-hasPermi="['system:role:edit']">接口权限</el-dropdown-item>
               <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"
                 v-hasPermi="['system:role:edit']">数据权限</el-dropdown-item>
               <el-dropdown-item command="handleAuthUser" icon="el-icon-user"
@@ -492,6 +494,9 @@ export default {
         case "handleAuthUser":
           this.handleAuthUser(row);
           break;
+        case "handleAuthPermission":
+          this.handleAuthPermission(row);
+          break;
         default:
           break;
       }
@@ -579,6 +584,11 @@ export default {
     handleAuthUser: function(row) {
       const roleId = row.id;
       this.$router.push("/system/role-auth/user/" + roleId);
+    },
+    /** 分配用户操作 */
+    handleAuthPermission: function(row) {
+      const roleId = row.id;
+      this.$router.push("/system/role-auth/permission/" + roleId);
     },
     /** 提交按钮 */
     submitForm: function() {
