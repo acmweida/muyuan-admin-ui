@@ -545,6 +545,15 @@ export default {
       const roleMenu = this.getRoleMenuTreeSelect(row);
       getRole(roleId).then(data => {
         this.form = data;
+        var list = []
+        var select = data.permissions
+
+        for (var index in select) {
+          if (select[index].type !== 'M' && select[index].type !== 'C') {
+            list.push(select[index].id);
+          }
+        }
+        this.form.permissionIds = list;
         this.open = true;
         this.$nextTick(() => {
           roleMenu.then(res => {

@@ -121,7 +121,6 @@ export default {
     },
     /** 选择授权用户操作 */
     handleSelectUser() {
-      debugger
       const roleId = this.queryParams.roleId;
       const userIds = this.userIds.join(",");
       if (userIds == "") {
