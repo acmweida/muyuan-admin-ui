@@ -236,7 +236,7 @@
 
 <script>
   import {listPermission, getPermission, delPermission, addPermission, updatePermission} from "@/api/system/permission";
-  import { treeselect as menuTreeselect, roleMenuTreeSelect } from "@/api/system/menu";
+  import { treeselectAll as menuTreeselect, roleMenuTreeSelect } from "@/api/system/menu";
 
   export default {
     name: "Permission",
@@ -250,8 +250,6 @@
             callback();
           }
       }
-
-
       return {
         filterText: '',
         defaultProps: {
@@ -370,7 +368,7 @@
       },
       /** 查询菜单树结构 */
       getMenuTreeselect() {
-        menuTreeselect().then(data => {
+        menuTreeselect(this.queryParams.platformType).then(data => {
           this.menuOptions = data;
         });
       },

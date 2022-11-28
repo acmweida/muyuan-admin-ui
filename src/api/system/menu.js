@@ -18,6 +18,14 @@ export function getMenu(menuId) {
 }
 
 // 查询菜单下拉树结构
+export function treeselectAll(platformType) {
+  return request({
+    url: '/manager-system/menu/all//treeSelect/'+platformType,
+    method: 'get'
+  })
+}
+
+// 查询菜单下拉树结构
 export function treeselect(platformType) {
   return request({
     url: '/manager-system/menu/treeSelect/'+platformType,
