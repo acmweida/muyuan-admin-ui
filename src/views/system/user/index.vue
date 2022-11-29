@@ -90,7 +90,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleAdd"
-              v-hasPermi="['system:user:add']"
+              v-hasPermi="['system:operator:add']"
             >新增</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -101,7 +101,7 @@
               size="mini"
               :disabled="single"
               @click="handleUpdate"
-              v-hasPermi="['system:user:edit']"
+              v-hasPermi="['system:operator:edit']"
             >修改</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -112,7 +112,7 @@
               size="mini"
               :disabled="multiple"
               @click="handleDelete"
-              v-hasPermi="['system:user:remove']"
+              v-hasPermi="['system:operator:remove']"
             >删除</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -122,7 +122,7 @@
               icon="el-icon-upload2"
               size="mini"
               @click="handleImport"
-              v-hasPermi="['system:user:import']"
+              v-hasPermi="['system:operator:import']"
             >导入</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -132,7 +132,7 @@
               icon="el-icon-download"
               size="mini"
               @click="handleExport"
-              v-hasPermi="['system:user:export']"
+              v-hasPermi="['system:operator:export']"
             >导出</el-button>
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -148,7 +148,7 @@
           <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
             <template slot-scope="scope">
               <el-switch
-                v-model="scope.row.status"
+                v-model="scope.row.status+''"
                 active-value="0"
                 inactive-value="1"
                 @change="handleStatusChange(scope.row)"
@@ -172,14 +172,14 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:user:edit']"
+                v-hasPermi="['system:operator:edit']"
               >修改</el-button>
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-                v-hasPermi="['system:user:remove']"
+                v-hasPermi="['system:operator:remove']"
               >删除</el-button>
               <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
                 <span class="el-dropdown-link">
@@ -187,9 +187,9 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
-                    v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
+                    v-hasPermi="['system:operator:resetPwd']">重置密码</el-dropdown-item>
                   <el-dropdown-item command="handleAuthRole" icon="el-icon-circle-check"
-                    v-hasPermi="['system:user:edit']">分配角色</el-dropdown-item>
+                    v-hasPermi="['system:operator:edit']">分配角色</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -406,7 +406,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/system/user/importData"
+        url: process.env.VUE_APP_BASE_API + "/system/operator/importData"
       },
       // 查询参数
       queryParams: {
@@ -568,7 +568,7 @@ export default {
       this.getTreeselect();
       getUser().then(response => {
         // this.postOptions = response.posts;
-        this.roleOptions = response.sysRoles;
+        this.roleOptions = response.roles;
         this.open = true;
         this.title = "添加用户";
         this.form.password = this.initPassword;
@@ -578,13 +578,13 @@ export default {
     handleUpdate(row) {
       this.reset();
       this.getTreeselect();
-      const userId = row.userId || this.ids;
+      const userId = row.id || this.ids;
       getUser(userId).then(response => {
         this.form = response.data;
-        this.postOptions = response.posts;
+        // this.postOptions = response.posts;
         this.roleOptions = response.roles;
-        this.form.postIds = response.postIds;
-        this.form.roleIds = response.roleIds;
+        // this.form.postIds = response.postIds;
+        // this.form.roleIds = response.roleIds;
         this.open = true;
         this.title = "修改用户";
         this.form.password = "";
