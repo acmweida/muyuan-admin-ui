@@ -468,7 +468,7 @@ export default {
     this.getList();
     this.getTreeselect();
     this.getConfigKey("sys.user.initPassword").then(response => {
-      this.initPassword = response.msg;
+      this.initPassword = response;
     });
   },
   methods: {
