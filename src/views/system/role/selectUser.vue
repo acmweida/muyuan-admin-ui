@@ -122,17 +122,15 @@ export default {
     /** 选择授权用户操作 */
     handleSelectUser() {
       const roleId = this.queryParams.roleId;
-      const userIds = this.userIds.join(",");
-      if (userIds == "") {
+      const userIds = this.userIds;
+      if (userIds.length === 0) {
         this.$modal.msgError("请选择要分配的用户");
         return;
       }
-      authUserSelectAll({ roleId: roleId, userIds: userIds }).then(res => {
-        this.$modal.msgSuccess(res.msg);
-        if (res.code === 200) {
+      authUserSelectAll({ id: roleId, userIds: userIds }).then(res => {
+        this.$modal.msgSuccess("操作成功");
           this.visible = false;
           this.$emit("ok");
-        }
       });
     }
   }
