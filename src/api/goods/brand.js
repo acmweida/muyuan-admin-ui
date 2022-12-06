@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询品牌列表
 export function listBrand(query) {
   return request({
-    url: '/manager-product/brand/list',
+    url: '/manager-goods/brand/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listBrand(query) {
 // 查询品牌分类列表
 export function listCategory(id) {
   return request({
-    url: '/manager-product/brand/category/'+id,
+    url: '/manager-goods/brand/category/'+id,
     method: 'get',
   })
 }
@@ -20,7 +20,7 @@ export function listCategory(id) {
 // 查询品牌详细
 export function getBrand(id) {
   return request({
-    url: '/manager-product/brand/' + id,
+    url: '/manager-goods/brand/' + id,
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function getBrand(id) {
 // 新增品牌
 export function addBrand(data) {
   return request({
-    url: '/manager-product/brand',
+    url: '/manager-goods/brand',
     method: 'post',
     data: data
   })
@@ -37,7 +37,7 @@ export function addBrand(data) {
 // 新增品牌
 export function linkCategory(data) {
   return request({
-    url: '/manager-product/brand/category',
+    url: '/manager-goods/brand/category',
     method: 'put',
     data: data
   })
@@ -46,7 +46,7 @@ export function linkCategory(data) {
 // 修改品牌
 export function updateBrand(data) {
   return request({
-    url: '/manager-product/brand',
+    url: '/manager-goods/brand',
     method: 'put',
     data: data
   })
@@ -55,7 +55,7 @@ export function updateBrand(data) {
 // 删除品牌
 export function delBrand(id) {
   return request({
-    url: '/manager-product/brand/' + id,
+    url: '/manager-goods/brand/' + id,
     method: 'delete'
   })
 }

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询商品分类列表
 export function listCategory(query) {
   return request({
-    url: '/manager-product/category/list',
+    url: '/manager-goods/category/list',
     method: 'get',
     params: query
   })
@@ -11,7 +11,7 @@ export function listCategory(query) {
 
 export function treeSelect(query) {
   return request({
-    url: '/manager-product/category/treeSelect',
+    url: '/manager-goods/category/treeSelect',
     method: 'get',
     params: query
   })
@@ -19,7 +19,7 @@ export function treeSelect(query) {
 
 export function selectOption(query) {
   return request({
-    url: '/manager-product/category/leaf/selectOption',
+    url: '/manager-goods/category/leaf/selectOption',
     method: 'get',
     params: query
   })
@@ -28,14 +28,14 @@ export function selectOption(query) {
 // 查询商品分类详细
 export function getCategory(id) {
   return request({
-    url: '/manager-product/category/' + id,
+    url: '/manager-goods/category/' + id,
     method: 'get'
   })
 }
 
 export function getCategoryByCode(code) {
   return request({
-    url: '/manager-product/category/leaf/' + code,
+    url: '/manager-goods/category/leaf/' + code,
     method: 'get'
   })
 }
@@ -43,7 +43,7 @@ export function getCategoryByCode(code) {
 // 新增商品分类
 export function addCategory(data) {
   return request({
-    url: '/manager-product/category',
+    url: '/manager-goods/category',
     method: 'post',
     data: data
   })
@@ -52,7 +52,7 @@ export function addCategory(data) {
 // 修改商品分类
 export function updateCategory(data) {
   return request({
-    url: '/manager-product/category',
+    url: '/manager-goods/category',
     method: 'put',
     data: data
   })
@@ -61,7 +61,7 @@ export function updateCategory(data) {
 // 删除商品分类
 export function delCategory(id) {
   return request({
-    url: '/manager-product/category/' + id,
+    url: '/manager-goods/category/' + id,
     method: 'delete'
   })
 }
@@ -70,7 +70,7 @@ export function delCategory(id) {
 // 查询商品分类属性列表
 export function getCategoryAttribute(id) {
   return request({
-    url: '/manager-product/category/detail/'+id,
+    url: '/manager-goods/category/detail/'+id,
     method: 'get'
   })
 }

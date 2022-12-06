@@ -39,7 +39,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['product:category:add']"
+          v-hasPermi="['goods:category:add']"
         >新增
         </el-button>
       </el-col>
@@ -86,7 +86,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['product:category:edit']"
+            v-hasPermi="['goods:category:edit']"
           >修改
           </el-button>
           <el-button
@@ -94,7 +94,7 @@
             type="text"
             icon="el-icon-plus"
             @click="handleAdd(scope.row)"
-            v-hasPermi="['product:category:add']"
+            v-hasPermi="['goods:category:add']"
           >新增
           </el-button>
           <el-button
@@ -102,7 +102,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['product:category:remove']"
+            v-hasPermi="['goods:category:remove']"
           >删除
           </el-button>
           <el-button
@@ -111,7 +111,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleAttributeEdit(scope.row)"
-            v-hasPermi="['product:category:remove']"
+            v-hasPermi="['goods:category:remove']"
           >属性编辑
           </el-button>
         </template>
@@ -158,7 +158,7 @@
     addCategory,
     updateCategory,
     treeSelect
-  } from "@/api/product/category";
+  } from "@/api/goods/category";
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -389,7 +389,7 @@
         this.form.logo = res.url
       },
       handleAttributeEdit(row) {
-        this.$router.push("/product/goods-category/attribute/" + row.code);
+        this.$router.push("/goods/goods-category/attribute/" + row.code);
       }
     }
   };

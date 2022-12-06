@@ -33,7 +33,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination v-show="total>0" :total="total" :page.sync="pageNum" :limit.sync="pageSize" />
 
     <el-form label-width="100px">
@@ -96,7 +96,7 @@ export default {
     },
     // 保存选中的数据编号
     getRowKey(row) {
-      return row.roleId;
+      return row.id;
     },
     /** 提交按钮 */
     submitForm() {

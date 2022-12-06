@@ -45,7 +45,7 @@
               type="primary"
               icon="el-icon-edit"
               @click="handleUpdate(item,index)"
-              v-hasPermi="['product:category:attribute:edit']"
+              v-hasPermi="['goods:category:attribute:edit']"
             >保存
             </el-button>
             <el-button
@@ -53,7 +53,7 @@
               type="danger"
               icon="el-icon-delete"
               @click="handleDelete(item)"
-              v-hasPermi="['product:category:attribute:remove']"
+              v-hasPermi="['goods:category:attribute:remove']"
             >删除
             </el-button>
           </el-form-item>
@@ -68,7 +68,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleAdd"
-              v-hasPermi="['product:category:attribute:add']"
+              v-hasPermi="['goods:category:attribute:add']"
             >新增
             </el-button>
           </el-form-item>
@@ -113,8 +113,8 @@
 </template>
 
 <script>
-  import {getAttribute, delAttribute, addAttribute, updateAttribute} from "@/api/product/attribute";
-  import {getCategoryAttribute} from "@/api/product/category";
+  import {getAttribute, delAttribute, addAttribute, updateAttribute} from "@/api/goods/attribute";
+  import {getCategoryAttribute} from "@/api/goods/category";
 
   export default {
     name: "Attribute",
@@ -313,7 +313,7 @@
       },
       /** 导出按钮操作 */
       handleExport() {
-        this.download('product/attribute/export', {
+        this.download('goods/attribute/export', {
           ...this.queryParams
         }, `attribute_${new Date().getTime()}.xlsx`)
       }

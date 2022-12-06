@@ -55,7 +55,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['product:brand:add']"
+          v-hasPermi="['goods:brand:add']"
         >新增
         </el-button>
       </el-col>
@@ -67,7 +67,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['product:brand:edit']"
+          v-hasPermi="['goods:brand:edit']"
         >修改
         </el-button>
       </el-col>
@@ -79,7 +79,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['product:brand:remove']"
+          v-hasPermi="['goods:brand:remove']"
         >删除
         </el-button>
       </el-col>
@@ -90,7 +90,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['product:brand:export']"
+          v-hasPermi="['goods:brand:export']"
         >导出
         </el-button>
       </el-col>
@@ -126,7 +126,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['product:brand:edit']"
+            v-hasPermi="['goods:brand:edit']"
           >修改
           </el-button>
           <el-button
@@ -134,7 +134,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['product:brand:remove']"
+            v-hasPermi="['goods:brand:remove']"
           >删除
           </el-button>
           <el-button
@@ -142,7 +142,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleAudit(scope.row)"
-            v-hasPermi="['product:brand:audit']"
+            v-hasPermi="['goods:brand:audit']"
           >审核
           </el-button>
           <el-button
@@ -150,7 +150,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleLink(scope.row)"
-            v-hasPermi="['product:brand:linkCategory']"
+            v-hasPermi="['goods:brand:linkCategory']"
           >关联分类
           </el-button>
         </template>
@@ -219,8 +219,8 @@
 </template>
 
 <script>
-  import {listBrand, getBrand, delBrand, addBrand, updateBrand, listCategory, linkCategory} from "@/api/product/brand";
-  import {selectOption} from "@/api/product/category";
+  import {listBrand, getBrand, delBrand, addBrand, updateBrand, listCategory, linkCategory} from "@/api/goods/brand";
+  import {selectOption} from "@/api/goods/category";
 
   export default {
     name: "Brand",
@@ -433,7 +433,7 @@
       },
       /** 导出按钮操作 */
       handleExport() {
-        this.download('product/brand/export', {
+        this.download('goods/brand/export', {
           ...this.queryParams
         }, `brand_${new Date().getTime()}.xlsx`)
       },

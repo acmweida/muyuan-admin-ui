@@ -135,16 +135,16 @@ export const dynamicRoutes = [
     ]
   },
   {
-    path: '/product/goods-category',
+    path: '/goods/goods-category',
     component: Layout,
     hidden: true,
-    permissions: ['product:category:attribute:edit'],
+    permissions: ['goods:category:attribute:edit'],
     children: [
       {
         path: 'attribute/:categoryCode(\\d+)',
-        component: () => import('@/views/product/category/attribute/editAttribute'),
+        component: () => import('@/views/goods/category/attribute/editAttribute'),
         name: 'ProductEdit',
-        meta: { title: '分类属性编辑', activeMenu: '/product/category' }
+        meta: { title: '分类属性编辑', activeMenu: '/goods/category' }
       }
     ]
   },
@@ -163,14 +163,14 @@ export const dynamicRoutes = [
     ]
   },
   {
-    path: '/product/feature-value',
+    path: '/goods/feature-value',
     component: Layout,
     hidden: true,
-    permissions: ['product:feature:list'],
+    permissions: ['goods:feature:list'],
     children: [
       {
         path: 'index/:featureId(\\d+)',
-        component: () => import('@/views/product/feature/value'),
+        component: () => import('@/views/goods/feature/value'),
         name: 'Data',
         meta: { title: '特征值', activeMenu: '/system/dict' }
       }

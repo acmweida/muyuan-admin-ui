@@ -31,7 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['product:value:add']"
+          v-hasPermi="['goods:value:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -42,7 +42,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['product:value:edit']"
+          v-hasPermi="['goods:value:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -53,7 +53,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['product:value:remove']"
+          v-hasPermi="['goods:value:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -63,7 +63,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['product:value:export']"
+          v-hasPermi="['goods:value:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -81,14 +81,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['product:value:edit']"
+            v-hasPermi="['goods:value:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['product:value:remove']"
+            v-hasPermi="['goods:value:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { listValue, getValue, delValue, addValue, updateValue } from "@/api/product/feature";
+import { listValue, getValue, delValue, addValue, updateValue } from "@/api/goods/feature";
 
 export default {
   name: "Value",
@@ -250,7 +250,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('product/value/export', {
+      this.download('goods/value/export', {
         ...this.queryParams
       }, `value_${new Date().getTime()}.xlsx`)
     }

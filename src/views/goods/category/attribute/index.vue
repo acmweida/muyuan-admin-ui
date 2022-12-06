@@ -24,7 +24,7 @@
 <script>
   import {
     getCategoryByCode
-  } from "@/api/product/category";
+  } from "@/api/goods/category";
   import {Message} from "element-ui";
 
   export default {
@@ -65,7 +65,7 @@
         if (reg.test(code)) {
           getCategoryByCode(code).then(response => {
             const code = response.code;
-            this.$router.push("/product/goods-category/attribute/" + code);
+            this.$router.push("/goods/goods-category/attribute/" + code);
           });
         } else {
           Message({
