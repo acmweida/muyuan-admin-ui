@@ -1,6 +1,6 @@
 <template>
   <el-image
-    :src="`${realSrc}`"
+    :src="createUrl()"
     fit="cover"
     :style="`width:${realWidth};height:${realHeight};`"
     :preview-src-list="realSrcList"
@@ -12,65 +12,92 @@
 </template>
 
 <script>
-export default {
-  name: "ImagePreview",
-  props: {
-    src: {
-      type: String,
-      required: true
+  import request from '@/utils/request'
+  import {getToken} from "@/utils/auth";
+
+  export default {
+    name: "ImagePreview",
+    props: {
+      src: {
+        type: String,
+        required: true
+      },
+      width: {
+        type: [Number, String],
+        default: ""
+      },
+      height: {
+        type: [Number, String],
+        default: ""
+      }
     },
-    width: {
-      type: [Number, String],
-      default: ""
+    computed: {
+      realSrc() {
+        let real_src = this.src.split(",")[0];
+        return real_src;
+      },
+      realSrcList() {
+        let real_src_list = this.src.split(",");
+        let srcList = [];
+        real_src_list.forEach(item => {
+          return srcList.push(item);
+        });
+        return srcList;
+      },
+      realWidth() {
+        return typeof this.width == "string" ? this.width : `${this.width}px`;
+      },
+      realHeight() {
+        return typeof this.height == "string" ? this.height : `${this.height}px`;
+      }
     },
-    height: {
-      type: [Number, String],
-      default: ""
+    methods: {
+      async createUrl() {
+        let real_src = this.src.split(",")[0];
+
+        const result = await request({
+          url: real_src,
+          method: 'get',
+        })
+        console.log(result)
+        var tempUrl = URL.createobjectURL(result);
+        return tempUrl
+      },
+      async createUrlList() {
+        let real_src_list = this.src.split(",");
+        let srcList = [];
+        real_src_list.forEach(item => {
+          return srcList.push(createUrl(item));
+        });
+        return srcList;
+      }
     }
-  },
-  computed: {
-    realSrc() {
-      let real_src = this.src.split(",")[0];
-      return real_src;
-    },
-    realSrcList() {
-      let real_src_list = this.src.split(",");
-      let srcList = [];
-      real_src_list.forEach(item => {
-        return srcList.push(item);
-      });
-      return srcList;
-    },
-    realWidth() {
-      return typeof this.width == "string" ? this.width : `${this.width}px`;
-    },
-    realHeight() {
-      return typeof this.height == "string" ? this.height : `${this.height}px`;
-    }
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.el-image {
-  border-radius: 5px;
-  background-color: #ebeef5;
-  box-shadow: 0 0 5px 1px #ccc;
-  ::v-deep .el-image__inner {
-    transition: all 0.3s;
-    cursor: pointer;
-    &:hover {
-      transform: scale(1.2);
+  .el-image {
+    border-radius: 5px;
+    background-color: #ebeef5;
+    box-shadow: 0 0 5px 1px #ccc;
+
+    ::v-deep .el-image__inner {
+      transition: all 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+
+    ::v-deep .image-slot {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      color: #909399;
+      font-size: 30px;
     }
   }
-  ::v-deep .image-slot {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    color: #909399;
-    font-size: 30px;
-  }
-}
 </style>

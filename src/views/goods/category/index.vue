@@ -217,7 +217,7 @@
             trigger: 'blur'
           }],
         },
-        logoAction: process.env.VUE_APP_BASE_API + '/api/common/file/upload?module=商品分类管理&function=分类图标上传',
+        logoAction: process.env.VUE_APP_BASE_API + '/api/system/file/upload?module=商品分类管理&function=分类图标上传',
         logofileList: [],
         parentIdOptions: [],
         parentIdProps: {
@@ -246,7 +246,7 @@
     methods: {
       /** 查询商品分类列表 */
       file(url) {
-        return process.env.VUE_APP_BASE_API+"/api/common/file/"+url;
+        return process.env.VUE_APP_BASE_API+"/api/system/file/"+url;
       },
       getList(tree, treeNode, resolve) {
         this.loading = true;

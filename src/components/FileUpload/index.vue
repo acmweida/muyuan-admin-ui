@@ -47,7 +47,7 @@ export default {
     // 值
     uploadFileUrl: {
       type:String,
-      default: process.env.VUE_APP_BASE_API + "/api/common/file/upload", // 上传的图片服务器地址
+      default: process.env.VUE_APP_BASE_API + "/api/system/file/upload", // 上传的图片服务器地址
     },
     value: [String, Object, Array],
     // 数量限制

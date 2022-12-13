@@ -375,7 +375,7 @@ export const selectComponents = [
     label: '上传',
     tag: 'el-upload',
     tagIcon: 'upload',
-    action: 'http://127.0.0.1:20000/api/common/file/upload',
+    action: 'http://127.0.0.1:20000/api/system/file/upload',
     module:'',
     function:'',
     defaultValue: null,

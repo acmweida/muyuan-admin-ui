@@ -118,7 +118,7 @@
           <dict-tag :options="dict.type.product_brand_audit_status" :value="scope.row.auditStatus"/>
         </template>
       </el-table-column>
-<!--      <el-table-column label="备注" align="center" prop="remark"/>-->
+      <!--      <el-table-column label="备注" align="center" prop="remark"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -256,7 +256,7 @@
           status: null,
           auditStatus: null
         },
-        logoAction: process.env.VUE_APP_BASE_API + '/api/common/file/upload?module=商品品牌管理&function=品牌图标上传',
+        logoAction: process.env.VUE_APP_BASE_API + '/system/file/upload?module=商品品牌管理&function=品牌图标上传',
         // 表单参数
         form: {},
         linkForm: {
@@ -321,7 +321,7 @@
 
       },
       file(url) {
-        return process.env.VUE_APP_BASE_API + "/api/common/file/" + url;
+        return "/system/file/" + url;
       },
       // 取消按钮
       cancel() {
