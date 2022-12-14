@@ -1,6 +1,6 @@
 <template>
   <el-image
-    :src="createUrl()"
+    :src="realSrc"
     fit="cover"
     :style="`width:${realWidth};height:${realHeight};`"
     :preview-src-list="realSrcList"
@@ -13,7 +13,6 @@
 
 <script>
   import request from '@/utils/request'
-  import {getToken} from "@/utils/auth";
 
   export default {
     name: "ImagePreview",
@@ -31,19 +30,16 @@
         default: ""
       }
     },
+    created() {
+      this.createUrl();
+    },
+    data() {
+      return{
+        realSrc:'',
+        realSrcList:[]
+      }
+    },
     computed: {
-      realSrc() {
-        let real_src = this.src.split(",")[0];
-        return real_src;
-      },
-      realSrcList() {
-        let real_src_list = this.src.split(",");
-        let srcList = [];
-        real_src_list.forEach(item => {
-          return srcList.push(item);
-        });
-        return srcList;
-      },
       realWidth() {
         return typeof this.width == "string" ? this.width : `${this.width}px`;
       },
@@ -54,14 +50,10 @@
     methods: {
       async createUrl() {
         let real_src = this.src.split(",")[0];
-
-        const result = await request({
-          url: real_src,
-          method: 'get',
+        const result = await request.get(real_src,{
+          responseType: 'blob'
         })
-        console.log(result)
-        var tempUrl = URL.createobjectURL(result);
-        return tempUrl
+        this.realSrc = URL.createObjectURL(result)
       },
       async createUrlList() {
         let real_src_list = this.src.split(",");
@@ -69,7 +61,7 @@
         real_src_list.forEach(item => {
           return srcList.push(createUrl(item));
         });
-        return srcList;
+        this.realSrcList = srcList
       }
     }
   };
