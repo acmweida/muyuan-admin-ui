@@ -359,6 +359,7 @@
           createById: null,
           auditStatus: 0
         };
+        this.logofileList = [];
         this.resetForm("form");
       },
       /** 搜索按钮操作 */

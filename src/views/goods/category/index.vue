@@ -246,7 +246,7 @@
     methods: {
       /** 查询商品分类列表 */
       file(url) {
-        return process.env.VUE_APP_BASE_API+"/api/system/file/"+url;
+        return "/system/file/"+url;
       },
       getList(tree, treeNode, resolve) {
         this.loading = true;
