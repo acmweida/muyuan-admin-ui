@@ -4,7 +4,7 @@
       <el-descriptions-item label="名称">{{category.name}}</el-descriptions-item>
       <el-descriptions-item label="编码">{{category.code}}</el-descriptions-item>
       <el-descriptions-item label="状态">
-        <dict-tag :options="dict.type.product_category_status" :value="category.status"/>
+        <dict-tag :options="dict.type.goods_category_status" :value="category.status"/>
       </el-descriptions-item>
     </el-descriptions>
 
@@ -24,7 +24,7 @@
           <el-form-item required label-width="100px" label="取值类型">
             <el-select v-model="item.inputType" placeholder="请选择" style="width: 100px">
               <el-option
-                v-for="item in dict.type.product_category_attribute_input_type"
+                v-for="item in dict.type.goods_category_attribute_input_type"
                 :key="item.value"
                 :label="item.label"
                 :value="parseInt(item.value)">
@@ -88,7 +88,7 @@
         <el-form-item required label-width="80px" label="取值类型">
           <el-select v-model="form.inputType" placeholder="请选择">
             <el-option
-              v-for="item in dict.type.product_category_attribute_input_type"
+              v-for="item in dict.type.goods_category_attribute_input_type"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -118,7 +118,7 @@
 
   export default {
     name: "Attribute",
-    dicts: ['product_category_status', "product_category_attribute_input_type", "product_category_attribute_type"],
+    dicts: ['goods_category_status', "goods_category_attribute_input_type", "goods_category_attribute_type"],
     data() {
       return {
         // 遮罩层

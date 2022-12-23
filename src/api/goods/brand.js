@@ -52,6 +52,15 @@ export function updateBrand(data) {
   })
 }
 
+// 修改品牌
+export function auditBrand(data) {
+  return request({
+    url: '/manager-goods/brand/audit',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除品牌
 export function delBrand(id) {
   return request({

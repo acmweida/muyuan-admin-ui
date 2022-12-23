@@ -18,7 +18,7 @@
           style="width: 240px"
         >
           <el-option
-            v-for="dict in dict.type.product_brand_status"
+            v-for="dict in dict.type.goods_brand_status"
             :key="dict.value"
             :label="dict.label"
             :value="parseInt(dict.value)"
@@ -34,7 +34,7 @@
           style="width: 240px"
         >
           <el-option
-            v-for="dict in dict.type.product_brand_audit_status"
+            v-for="dict in dict.type.goods_brand_audit_status"
             :key="dict.value"
             :label="dict.label"
             :value="parseInt(dict.value)"
@@ -104,20 +104,20 @@
       <el-table-column label="英文名称" align="center" prop="englishName"/>
       <el-table-column label="图标" align="center" prop="logo">
         <template slot-scope="scope">
-          <image-preview :src="file(scope.row.logo)" :width="32" :height="32"/>
+          <image-preview  :src="scope.row.logo" :width="32" :height="32"/>
         </template>
       </el-table-column>
-      <el-table-column label="排序" align="center" prop="orderNum"/>
+<!--      <el-table-column label="排序" align="center" prop="orderNum"/>-->
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.product_brand_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.goods_brand_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" align="center" prop="auditStatus">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.product_brand_audit_status" :value="scope.row.auditStatus"/>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="审核状态" align="center" prop="auditStatus">-->
+<!--        <template slot-scope="scope">-->
+<!--          <dict-tag :options="dict.type.goods_brand_audit_status" :value="scope.row.auditStatus"/>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <!--      <el-table-column label="备注" align="center" prop="remark"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -137,7 +137,7 @@
             v-hasPermi="['goods:brand:remove']"
           >删除
           </el-button>
-          <el-button
+          <el-button  v-if="scope.row.auditStatus === 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -145,7 +145,7 @@
             v-hasPermi="['goods:brand:audit']"
           >审核
           </el-button>
-          <el-button
+          <el-button v-if="scope.row.auditStatus === 0"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -183,6 +183,15 @@
                        @input="handleUploadSuccess">
           </file-upload>
         </el-form-item>
+        <el-form-item label="状态"  v-if="form.auditStatus === 0">
+          <el-radio-group v-model="form.status">
+            <el-radio
+              v-for="dict in dict.type.goods_brand_status"
+              :key="parseInt(dict.value)"
+              :label="parseInt(dict.value)"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
@@ -193,6 +202,27 @@
       </div>
     </el-dialog>
 
+    <!-- 添加或修改品牌对话框 -->
+    <el-dialog :title="title" :visible.sync="auth" width="500px" append-to-body>
+      <el-form ref="authForm" :model="authForm" label-width="80px">
+        <el-form-item  label="品牌">
+          <el-input v-model="authForm.name" readonly/>
+        </el-form-item>
+        <el-form-item label="审核状态" >
+          <el-radio-group v-model="authForm.auditStatus" size="small">
+            <el-radio label="0">通过</el-radio>
+            <el-radio label="2">不通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="authForm.remark" placeholder="请输入备注"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitAuth">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
 
     <!-- 添加或修改品牌对话框 -->
     <el-dialog :title="title" :visible.sync="link" width="900px" append-to-body>
@@ -219,12 +249,12 @@
 </template>
 
 <script>
-  import {listBrand, getBrand, delBrand, addBrand, updateBrand, listCategory, linkCategory} from "@/api/goods/brand";
+  import {listBrand, getBrand, delBrand, addBrand, updateBrand, listCategory, linkCategory,auditBrand} from "@/api/goods/brand";
   import {selectOption} from "@/api/goods/category";
 
   export default {
     name: "Brand",
-    dicts: ['product_brand_status', 'product_brand_audit_status'],
+    dicts: ['goods_brand_status', 'goods_brand_audit_status'],
     data() {
       return {
         // 遮罩层
@@ -248,17 +278,23 @@
         // 是否显示弹出层
         open: false,
         link: false,
+        auth: false,
         // 查询参数
         queryParams: {
           pageNum: 1,
           pageSize: 10,
           name: null,
           status: null,
-          auditStatus: null
+          auditStatus: 0
         },
         logoAction: process.env.VUE_APP_BASE_API + '/system/file/upload?module=商品品牌管理&function=品牌图标上传',
         // 表单参数
         form: {},
+        authForm:{
+          id:null,
+          name:null,
+          authStatus:null
+        },
         linkForm: {
           id: null,
           name: null,
@@ -318,10 +354,14 @@
         );
       },
       handleAudit(row) {
+        this.authForm = {
+          id : row.id,
+          name : row.name,
+          authStatus: row.auditStatus
+        }
 
-      },
-      file(url) {
-        return "/system/file/" + url;
+        this.auth = true;
+        this.title = "品牌审核"
       },
       // 取消按钮
       cancel() {
@@ -419,6 +459,13 @@
         linkCategory(this.linkForm).then(response => {
           this.$modal.msgSuccess("修改成功");
           this.link = false;
+        });
+      },
+      /** 提交按钮 */
+      submitAuth() {
+        auditBrand(this.authForm).then(response => {
+          this.$modal.msgSuccess("修改成功");
+          this.auth = false;
         });
       },
       /** 删除按钮操作 */

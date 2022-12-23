@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="字典名称" prop="dictName">
         <el-input
-          v-model="queryParams.dictName"
+          v-model="queryParams.name"
           placeholder="请输入字典名称"
           clearable
           size="small"
@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item label="字典类型" prop="dictType">
         <el-input
-          v-model="queryParams.dictType"
+          v-model="queryParams.type"
           placeholder="请输入字典类型"
           clearable
           size="small"
@@ -223,8 +223,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        dictName: undefined,
-        dictType: undefined,
+        name: undefined,
+        type: undefined,
         status: undefined
       },
       // 表单参数

@@ -33,6 +33,14 @@
     created() {
       this.createUrl();
     },
+    watch: {
+      src : {
+        handler(newValue,oldValue) {
+          console.log("src change");
+          this.createUrl();
+        }
+      }
+    },
     data() {
       return{
         realSrc:'',
@@ -49,7 +57,7 @@
     },
     methods: {
       async createUrl() {
-        let real_src = this.src.split(",")[0];
+        let real_src = "/system/file/" + this.src.split(",")[0];
         const result = await request.get(real_src,{
           responseType: 'blob'
         })
@@ -59,7 +67,7 @@
         let real_src_list = this.src.split(",");
         let srcList = [];
         real_src_list.forEach(item => {
-          return srcList.push(createUrl(item));
+          return srcList.push(this.createUrl(item));
         });
         this.realSrcList = srcList
       }

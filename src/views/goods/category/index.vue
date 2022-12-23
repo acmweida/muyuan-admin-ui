@@ -70,12 +70,12 @@
       <el-table-column label="产品编码" align="center" prop="code"/>
       <el-table-column label="分类图标" align="center" prop="logo">
         <template slot-scope="scope">
-          <image-preview :src="file(scope.row.logo)" :width="32" :height="32" />
+          <image-preview :src="scope.row.logo " :width="32" :height="32" />
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.product_category_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.goods_category_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="排序" align="center" prop="orderNum"/>
@@ -164,7 +164,7 @@
 
   export default {
     name: "Category",
-    dicts: ['product_category_status'],
+    dicts: ['goods_category_status'],
     components: {
       Treeselect
     },
@@ -245,9 +245,6 @@
     },
     methods: {
       /** 查询商品分类列表 */
-      file(url) {
-        return "/system/file/"+url;
-      },
       getList(tree, treeNode, resolve) {
         this.loading = true;
         if (tree === undefined) {
