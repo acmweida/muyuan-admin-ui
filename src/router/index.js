@@ -138,7 +138,7 @@ export const dynamicRoutes = [
     path: '/goods/goods-category',
     component: Layout,
     hidden: true,
-    permissions: ['goods:category:attribute:edit'],
+    permissions: ['category:attribute:web'],
     children: [
       {
         path: 'attribute/:categoryCode(\\d+)',
