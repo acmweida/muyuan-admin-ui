@@ -11,70 +11,70 @@
     <el-divider/>
 
     <el-descriptions title="分类属性"/>
-
-    <div class="attribute">
-      <div>
-        <el-form :ref="index" :model="item" :rules="rules" v-for="(item,index) in attributeList" class="layout" :key="index">
-          <el-form-item required label-width="100px" label="属性名称" prop="name">
-            <el-input v-model="item.name" style="width: 150px"/>
-          </el-form-item>
-          <el-form-item required label-width="100px" label="属性编码" prop="code">
-            <el-input v-model="item.code" style="width: 150px"/>
-          </el-form-item>
-          <el-form-item required label-width="100px" label="取值类型">
-            <el-select v-model="item.inputType" placeholder="请选择" style="width: 100px">
-              <el-option
-                v-for="item in dict.type.goods_category_attribute_input_type"
-                :key="item.value"
-                :label="item.label"
-                :value="parseInt(item.value)">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label-width="100px" label="属性类型" prop="typeArray">
-            <el-checkbox-group v-model="typeArrays[index]" >
-              <el-checkbox label="1">公共</el-checkbox>
-              <el-checkbox label="2">销售</el-checkbox>
-              <el-checkbox label="4">关键</el-checkbox>
-              <el-checkbox label="8">其他</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label-width="80px">
-            <el-button
-              size="mini"
-              type="primary"
-              icon="el-icon-edit"
-              @click="handleUpdate(item,index)"
-              v-hasPermi="['goods:category:attribute:edit']"
-            >保存
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(item)"
-              v-hasPermi="['goods:category:attribute:remove']"
-            >删除
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div>
-        <el-form>
-          <el-form-item>
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['goods:category:attribute:add']"
-            >新增
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+    <div>
+      <el-form>
+        <el-form-item>
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['category:attribute:add']"
+          >新增
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
+    <el-table v-loading="loading" :data="attributeList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="属性名称" align="center" prop="name"/>
+      <el-table-column label="属性编码" align="center" prop="code"/>
+      <el-table-column label="取值类型" align="center" prop="inputType">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.inputType">
+            <el-option disabled
+                       v-for="item in dict.type.goods_category_attribute_input_type"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="parseInt(item.value)">
+            </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="属性类型" align="center" prop="typeArray">
+        <template slot-scope="scope">
+          <el-checkbox-group v-model="typeArrays[scope.$index]">
+            <el-checkbox label="1">公共</el-checkbox>
+            <el-checkbox label="2">销售</el-checkbox>
+            <el-checkbox label="4">关键</el-checkbox>
+            <el-checkbox label="8">其他</el-checkbox>
+          </el-checkbox-group>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(item,index)"
+            v-hasPermi="['goods:brand:edit']"
+          >保存
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(item)"
+            v-hasPermi="['category:attribute:remove']"
+          >删除
+          </el-button>
+        </template>
+      </el-table-column>
+
+    </el-table>
+
 
     <!-- 添加或修改商品分类属性对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -89,6 +89,16 @@
           <el-select v-model="form.inputType" placeholder="请选择">
             <el-option
               v-for="item in dict.type.goods_category_attribute_input_type"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item required label-width="80px" label="值类型">
+          <el-select v-model="form.valueType" placeholder="请选择">
+            <el-option
+              v-for="item in dict.type.goods_category_attribute_value_type"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -118,7 +128,7 @@
 
   export default {
     name: "Attribute",
-    dicts: ['goods_category_status', "goods_category_attribute_input_type", "goods_category_attribute_type"],
+    dicts: ['goods_category_status', "goods_category_attribute_input_type", "goods_category_attribute_type", "goods_category_attribute_value_type"],
     data() {
       return {
         // 遮罩层
@@ -131,7 +141,7 @@
         multiple: true,
         // 显示搜索条件
         showSearch: true,
-        typeArrays:[],
+        typeArrays: [],
         // 总条数
         total: 0,
         // 商品分类属性表格数据
@@ -156,7 +166,8 @@
           categoryCode: null,
           inputType: null,
           typeArray: [],
-          code:null
+          code: null,
+          valueType: null
         },
         // 表单校验
         rules: {
@@ -183,11 +194,14 @@
     },
     methods: {
       /** 查询商品分类属性列表 */
+      getAttribute() {
+
+      },
       get() {
         this.loading = true;
         getCategoryAttribute(this.$route.params.categoryCode).then(response => {
           this.category = response;
-          var typeArrays =[];
+          var typeArrays = [];
           for (var index in response.attributes) {
             let type = response.attributes[index].type;
             var typeArray = [];
