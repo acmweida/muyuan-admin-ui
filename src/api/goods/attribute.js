@@ -28,6 +28,15 @@ export function updateAttribute(data) {
   })
 }
 
+// 修改商品分类属性-可选值
+export function updateAttributeValue(data) {
+  return request({
+    url: '/manager-goods/category/attribute/values',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除商品分类属性
 export function delAttribute(id) {
   return request({

@@ -44,7 +44,7 @@
       </el-table-column>
       <el-table-column label="属性类型" align="center" prop="typeArray">
         <template slot-scope="scope">
-          <el-checkbox-group v-model="typeArrays[scope.$index]">
+          <el-checkbox-group v-model="typeArrays[scope.$index]" disabled>
             <el-checkbox label="1">公共</el-checkbox>
             <el-checkbox label="2">销售</el-checkbox>
             <el-checkbox label="4">关键</el-checkbox>
@@ -54,13 +54,13 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <el-button v-if="scope.row.inputType === 2 && scope.row.valueType === 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(item,index)"
+            @click="handleUpdate(scope.row)"
             v-hasPermi="['goods:brand:edit']"
-          >保存
+          >编辑可选值
           </el-button>
           <el-button
             size="mini"
@@ -119,11 +119,49 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
+    <!-- 添加或修改商品分类属性对话框 -->
+    <el-dialog :title="title" :visible.sync="valueOpen" width="500px" append-to-body>
+      <el-form ref="valuesForm" :model="valuesForm" :rules="rules" label-width="80px">
+        <el-form-item label="属性名称" >
+          {{valuesForm.name}}
+        </el-form-item>
+        <el-form-item label="属性编码">
+          {{valuesForm.code}}
+        </el-form-item>
+        <el-form-item label="可选值">
+          <el-tag
+            :key="tag"
+            v-for="tag in valuesForm.values"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisible"
+            v-model="inputValue"
+            ref="saveTagInput"
+            size="small"
+            @keyup.enter.native="handleInputConfirm"
+            @blur="handleInputConfirm"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Value</el-button>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormValue">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import {getAttribute, delAttribute, addAttribute, updateAttribute} from "@/api/goods/attribute";
+  import {getAttribute, delAttribute, addAttribute, updateAttribute,updateAttributeValue} from "@/api/goods/attribute";
   import {getCategoryAttribute} from "@/api/goods/category";
 
   export default {
@@ -142,6 +180,8 @@
         // 显示搜索条件
         showSearch: true,
         typeArrays: [],
+        inputVisible: false,
+        inputValue: '',
         // 总条数
         total: 0,
         // 商品分类属性表格数据
@@ -151,6 +191,7 @@
         title: "",
         // 是否显示弹出层
         open: false,
+        valueOpen: false,
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -169,8 +210,19 @@
           code: null,
           valueType: null
         },
+        valuesForm: {
+          id:null,
+          values:[],
+          name: null,
+          code:null
+        },
         // 表单校验
         rules: {
+          values:[{
+            required:true,
+            message: '请输入属性值',
+            trigger: 'change'
+          }],
           name: [{
             required: true,
             message: '请输入属性名称',
@@ -193,10 +245,24 @@
       this.get();
     },
     methods: {
-      /** 查询商品分类属性列表 */
-      getAttribute() {
-
+      handleInputConfirm() {
+        let inputValue = this.inputValue;
+        if (inputValue) {
+          this.valuesForm.values.push(inputValue);
+        }
+        this.inputVisible = false;
+        this.inputValue = '';
       },
+      handleClose(tag) {
+        this.valuesForm.values.splice(this.valuesForm.values.indexOf(tag), 1);
+      },
+      showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+      /** 查询商品分类属性列表 */
       get() {
         this.loading = true;
         getCategoryAttribute(this.$route.params.categoryCode).then(response => {
@@ -229,6 +295,7 @@
       // 取消按钮
       cancel() {
         this.open = false;
+        this.valueOpen = false
         this.reset();
       },
       // 表单重置
@@ -241,6 +308,13 @@
           typeArray: []
         };
         this.resetForm("form");
+        this.valuesForm = {
+          id:null,
+            values:[],
+            name: null,
+            code:null
+        };
+        this.resetForm("valuesForm");
       },
       /** 搜索按钮操作 */
       handleQuery() {
@@ -265,21 +339,21 @@
         this.title = "添加商品分类属性";
       },
       /** 修改按钮操作 */
-      handleUpdate(row, index) {
-        this.$refs[index][0].validate(valid => {
-          if (valid) {
-            row.categoryCode = this.category.code
-            var type = 0;
-            for (var i in this.typeArrays[index]) {
-              type += parseInt(this.typeArrays[index][i])
-            }
-            row.type = type;
-            updateAttribute(row).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.get();
-            });
+      handleUpdate(row) {
+        this.reset();
+        getAttribute(row.id).then(response => {
+          var attributeValues = response.attributeValues;
+
+          var values = [];
+          for (var index in attributeValues) {
+              values.push(attributeValues[index].value)
           }
+          response.values =values;
+
+
+          this.valuesForm = response;
+          this.valueOpen = true;
+          this.title = "编辑可选值";
         });
       },
       removeDomain(item) {
@@ -314,6 +388,20 @@
           }
         });
       },
+      /** 提交按钮 */
+      submitFormValue() {
+        this.$refs["valuesForm"].validate(valid => {
+          if (valid) {
+            if (this.valuesForm.id != null) {
+              updateAttributeValue({id:this.valuesForm.id,values:this.valuesForm.values}).then(response => {
+                this.$modal.msgSuccess("修改成功");
+                this.valueOpen = false;
+                this.get();
+              });
+            }
+          }
+        });
+      },
       /** 删除按钮操作 */
       handleDelete(row) {
         const ids = row.id || this.ids;
@@ -336,13 +424,24 @@
 </script>
 
 <style>
-  .attribute {
-    display: grid;
-    width: 100%;
-    grid-template-columns: 80% auto;
+
+  .el-checkbox.is-disabled.is-checked > span.el-checkbox__input.is-disabled.is-checked > span {
+    background-color: #00afff;
   }
 
-  .layout {
-    display: flex;
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+  .button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
   }
 </style>
